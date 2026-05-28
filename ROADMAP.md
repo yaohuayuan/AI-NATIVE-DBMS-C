@@ -1,79 +1,39 @@
 # ROADMAP
 
-本路线图描述 AI-NATIVE-DBMS-C 的阶段边界。早期版本优先保证工程规范、可构建、可测试和可解释的演进节奏，不追求一次性完成终局架构。
+本路线图使用 `vX.Y.Z` 版本格式。`X` 是主版本号，`Y` 是阶段版本号，`Z` 是当前阶段内的小里程碑。详细规则见 [docs/14_versioning.md](docs/14_versioning.md)。
 
-## v0.1：工程骨架
+## 已完成
 
-- `CMakePresets.json`。
-- `aidb_core` 基础库目标。
-- `aidb` 最小可执行文件。
-- `basic_core_test`。
-- 基础目录结构。
+- [x] `v0.1.0` 工程骨架初始化
+- [x] `v0.1.1` 项目规范冻结
 
-## v0.1.1：规范冻结
+## 当前完成
 
-- 文档语言规范。
-- 命名规范。
-- 目录职责规范。
-- 内存和所有权规范。
-- 错误处理规范。
-- 测试规范。
-- Git 和提交规范。
-- AI 辅助开发规范。
+- [x] `v0.1.2` Core Foundation 设计与版本号规范
 
-## v0.1.2：core/error/result/context
+`v0.1.2` 是文档和设计阶段，不包含 `error/result/context` 的代码实现。
 
-- 统一错误码。
-- result 风格。
-- context 设计。
-- `basic_core_test` 扩展。
+## 后续
 
-## v0.1.3：memory + arena
+- [ ] `v0.1.3` `error/result/context` 最小实现
+- [ ] `v0.1.4` `memory + arena`
+- [ ] `v0.1.5` `vector + string_utils`
+- [ ] `v0.2.0` DBMS Core baseline
+- [ ] `v0.3.0` Explain Plan / Scan
+- [ ] `v0.4.0` Handmade JSON + MockModel + AiClient 接口
+- [ ] `v0.5.0` `AI_MATCH + AiCache + AiCallLog`
+- [ ] `v1.0.0` 论文级原型机
 
-- `aidb_malloc` / `aidb_free`。
-- arena。
-- 不让 `malloc/free` 散落在业务模块。
+## 阶段说明
 
-## v0.1.4：vector + string_utils
+`v0.1.x` 聚焦工程骨架、项目规范和 Core Foundation。这个阶段只建立最低限度的工程纪律和基础抽象，不提前实现 DBMS、JSON、net、AI 或优化器。
 
-- vector。
-- `string_utils`。
-- 对应 core 测试。
+`v0.2.0` 开始进入 DBMS Core baseline，包括 storage、page、file manager、buffer、record、parser、plan/scan。
 
-## v0.2：DBMS Core baseline
+`v0.3.0` 聚焦 Explain Plan / Scan，为后续 AI 算子的可解释执行路径打基础。
 
-- storage。
-- page。
-- file manager。
-- buffer。
-- record。
-- parser。
-- plan/scan。
+`v0.4.0` 引入 Handmade JSON、确定性的 MockModel 和 AiClient 接口。默认测试仍然不调用真实 API。
 
-## v0.3：Explain Plan/Scan
+`v0.5.0` 引入 `AI_MATCH`、`AiCache`、`AiCallLog` 和最小谓词重排。
 
-- 输出可读的 `EXPLAIN PLAN`。
-- 输出可读的 `EXPLAIN SCAN`。
-- 为后续 AI 算子解释打基础。
-
-## v0.4：Handmade JSON + MockModel + AiClient 接口
-
-- 手搓项目需要的 JSON 子集。
-- 提供确定性的 `MockModel`。
-- 定义 `AiClient` 接口。
-- 默认测试仍然不调用真实 API。
-
-## v0.5：AI_MATCH + AiCache + AiCallLog + 最小谓词重排
-
-- 引入 `AI_MATCH` 语义算子。
-- 接入计划、执行和 explain 路径。
-- 增加 `AiCache`。
-- 增加 `AiCallLog`。
-- 做最小谓词重排实验。
-
-## v1.0：AI Operator Runtime + AI-aware Optimizer + Benchmark + 技术报告
-
-- 完成可演示的 AI Operator Runtime。
-- 引入 AI-aware Optimizer。
-- 建立 benchmark。
-- 输出技术报告。
+`v1.0.0` 目标是论文级原型机：AI Operator Runtime、AI-aware Optimizer、Benchmark 和技术报告基本完成。
