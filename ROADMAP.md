@@ -1,58 +1,79 @@
 # ROADMAP
 
-## v0.1 Skeleton
+本路线图描述 AI-NATIVE-DBMS-C 的阶段边界。早期版本优先保证工程规范、可构建、可测试和可解释的演进节奏，不追求一次性完成终局架构。
 
-- Establish the project skeleton.
-- Keep a minimal CLI entry point.
-- Keep basic non-network tests green.
-- Document build, run, and test commands.
+## v0.1：工程骨架
 
-## v0.2 DBMS Core Baseline
+- `CMakePresets.json`。
+- `aidb_core` 基础库目标。
+- `aidb` 最小可执行文件。
+- `basic_core_test`。
+- 基础目录结构。
 
-- Add a small DBMS core baseline.
-- Support initial schema visibility with `SHOW SCHEMA`.
-- Support `EXPLAIN PLAN` / `EXPLAIN SCAN` style output.
+## v0.1.1：规范冻结
 
-## v0.3 Handmade AI Runtime Foundations
+- 文档语言规范。
+- 命名规范。
+- 目录职责规范。
+- 内存和所有权规范。
+- 错误处理规范。
+- 测试规范。
+- Git 和提交规范。
+- AI 辅助开发规范。
 
-- Implement handmade JSON support.
-- Add a `MockModel` for deterministic tests.
-- Define the `AiClient` interface without requiring real API access in default tests.
+## v0.1.2：core/error/result/context
 
-## v0.4 AI_MATCH Planning Path
+- 统一错误码。
+- result 风格。
+- context 设计。
+- `basic_core_test` 扩展。
 
-- Introduce `AI_MATCH`.
-- Connect `AI_MATCH` into plan and scan flows.
-- Keep mock-first testing as the default.
+## v0.1.3：memory + arena
 
-## v0.5 Cache, CallLog, and Mini Optimizer
+- `aidb_malloc` / `aidb_free`。
+- arena。
+- 不让 `malloc/free` 散落在业务模块。
 
-- Add `AiCache`.
-- Add `AiCallLog`.
-- Add minimal predicate reordering.
+## v0.1.4：vector + string_utils
 
-## v1.0 AI-Native DBMS Prototype
+- vector。
+- `string_utils`。
+- 对应 core 测试。
 
-- Provide an AI Operator Runtime.
-- Provide an AI-aware optimizer.
-- Add benchmarks.
-- Produce a technical report.
+## v0.2：DBMS Core baseline
 
-## Deferred Implementation Files
+- storage。
+- page。
+- file manager。
+- buffer。
+- record。
+- parser。
+- plan/scan。
 
-The following future modules are intentionally roadmap-only in v0.1:
+## v0.3：Explain Plan/Scan
 
-- `ai_summary.c`
-- `ai_extract.c`
-- `ai_rank.c`
-- `ai_batcher.c`
-- `ai_budget.c`
-- `ai_retry.c`
-- `ai_metrics.c`
-- `cache_aware_optimizer.c`
-- `budget_aware_optimizer.c`
-- `nl2sql_agent.c`
-- `sql_repair_agent.c`
-- `explain_agent.c`
-- `schema_tool.c`
-- `run_sql_tool.c`
+- 输出可读的 `EXPLAIN PLAN`。
+- 输出可读的 `EXPLAIN SCAN`。
+- 为后续 AI 算子解释打基础。
+
+## v0.4：Handmade JSON + MockModel + AiClient 接口
+
+- 手搓项目需要的 JSON 子集。
+- 提供确定性的 `MockModel`。
+- 定义 `AiClient` 接口。
+- 默认测试仍然不调用真实 API。
+
+## v0.5：AI_MATCH + AiCache + AiCallLog + 最小谓词重排
+
+- 引入 `AI_MATCH` 语义算子。
+- 接入计划、执行和 explain 路径。
+- 增加 `AiCache`。
+- 增加 `AiCallLog`。
+- 做最小谓词重排实验。
+
+## v1.0：AI Operator Runtime + AI-aware Optimizer + Benchmark + 技术报告
+
+- 完成可演示的 AI Operator Runtime。
+- 引入 AI-aware Optimizer。
+- 建立 benchmark。
+- 输出技术报告。
