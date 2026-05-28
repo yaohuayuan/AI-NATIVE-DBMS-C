@@ -90,4 +90,32 @@ if(AIDB_BUILD_TESTS)
         NAME basic_core_test
         COMMAND basic_core_test
     )
+
+    add_executable(error_test
+        tests/core/error_test.c
+    )
+
+    target_link_libraries(error_test
+        PRIVATE
+            aidb_core
+    )
+
+    add_test(
+        NAME error_test
+        COMMAND error_test
+    )
+
+    add_executable(context_test
+        tests/core/context_test.c
+    )
+
+    target_link_libraries(context_test
+        PRIVATE
+            aidb_core
+    )
+
+    add_test(
+        NAME context_test
+        COMMAND context_test
+    )
 endif()
