@@ -44,6 +44,7 @@ endif()
 # ------------------------------------------------------------
 add_library(aidb_core STATIC
     src/core/context.c
+    src/core/error.c
 )
 
 target_include_directories(aidb_core

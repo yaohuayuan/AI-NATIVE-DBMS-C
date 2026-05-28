@@ -2,18 +2,21 @@
 
 #include "aidb/aidb.h"
 
-int main(void) {
-    AidbContext ctx;
+int main(void)
+{
+    struct aidb_context context;
 
-    aidb_init(&ctx);
+    if (aidb_context_init(&context) != AIDB_OK) {
+        fprintf(stderr, "failed to initialize aidb context\n");
+        return 1;
+    }
 
     printf("====================================\n");
-    printf(" %s\n", ctx.project_name);
-    printf(" Version: %s\n", aidb_version());
-    printf(" Status : %s\n", ctx.initialized ? "initialized" : "not initialized");
+    printf(" AI-NATIVE-DBMS-C\n");
+    printf(" Status : %s\n", aidb_status_message(aidb_context_last_status(&context)));
     printf("====================================\n");
 
-    aidb_shutdown(&ctx);
+    aidb_context_deinit(&context);
 
     return 0;
 }
