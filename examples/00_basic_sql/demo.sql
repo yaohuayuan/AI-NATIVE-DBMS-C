@@ -1,0 +1,2 @@
+-- Reserved for the first minimal SQL demo.
+-- v0.1 does not execute SQL yet.

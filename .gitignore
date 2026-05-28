@@ -1,0 +1,94 @@
+# ============================================================
+# Build outputs
+# ============================================================
+build/
+bin/
+out/
+.cache/
+__cmake_systeminformation/
+
+# ============================================================
+# CMake generated files
+# ============================================================
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+CTestTestfile.cmake
+Testing/
+compile_commands.json
+install_manifest.txt
+
+# Local CMake presets
+CMakeUserPresets.json
+
+# ============================================================
+# Environment / secrets
+# ============================================================
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+*.crt
+*.p12
+*.pfx
+
+# Optional local config files
+config/local.*
+config/*.local.*
+secrets/
+
+# ============================================================
+# Runtime data
+# ============================================================
+data/db/
+data/logs/
+data/cache/
+data/temp/
+
+# Keep placeholder files if needed
+!data/.gitkeep
+!data/db/.gitkeep
+!data/logs/.gitkeep
+!data/cache/.gitkeep
+!data/temp/.gitkeep
+
+# ============================================================
+# Object / binary files
+# ============================================================
+*.o
+*.obj
+*.exe
+*.dll
+*.a
+*.lib
+*.so
+*.dylib
+
+# ============================================================
+# Logs
+# ============================================================
+*.log
+
+# ============================================================
+# Temporary files
+# ============================================================
+*.tmp
+*.bak
+*.swp
+*.swo
+*~
+
+# ============================================================
+# Windows
+# ============================================================
+Thumbs.db
+Desktop.ini
+
+# ============================================================
+# VSCode local cache
+# ============================================================
+.vscode/.ropeproject/
+.vscode/ipch/
+.vscode/.browse.VC.db
+.vscode/.browse.VC.db-*

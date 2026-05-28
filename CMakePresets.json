@@ -1,0 +1,66 @@
+{
+  "version": 6,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 25,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "mingw-debug",
+      "displayName": "MinGW Debug",
+      "description": "Configure AI-NATIVE-DBMS-C with MinGW Makefiles in Debug mode",
+      "generator": "MinGW Makefiles",
+      "binaryDir": "${sourceDir}/build/mingw-debug",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+        "AIDB_BUILD_TESTS": "ON"
+      }
+    },
+    {
+      "name": "mingw-release",
+      "displayName": "MinGW Release",
+      "description": "Configure AI-NATIVE-DBMS-C with MinGW Makefiles in Release mode",
+      "generator": "MinGW Makefiles",
+      "binaryDir": "${sourceDir}/build/mingw-release",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+        "AIDB_BUILD_TESTS": "ON"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "mingw-debug-build",
+      "displayName": "Build MinGW Debug",
+      "configurePreset": "mingw-debug",
+      "jobs": 8
+    },
+    {
+      "name": "mingw-release-build",
+      "displayName": "Build MinGW Release",
+      "configurePreset": "mingw-release",
+      "jobs": 8
+    }
+  ],
+  "testPresets": [
+    {
+      "name": "mingw-debug-test",
+      "displayName": "Test MinGW Debug",
+      "configurePreset": "mingw-debug",
+      "output": {
+        "outputOnFailure": true
+      }
+    },
+    {
+      "name": "mingw-release-test",
+      "displayName": "Test MinGW Release",
+      "configurePreset": "mingw-release",
+      "output": {
+        "outputOnFailure": true
+      }
+    }
+  ]
+}
