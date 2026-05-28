@@ -86,6 +86,11 @@ if(AIDB_BUILD_TESTS)
             aidb_core
     )
 
+    target_include_directories(basic_core_test
+        PRIVATE
+            ${CMAKE_SOURCE_DIR}/tests
+    )
+
     add_test(
         NAME basic_core_test
         COMMAND basic_core_test
@@ -100,6 +105,11 @@ if(AIDB_BUILD_TESTS)
             aidb_core
     )
 
+    target_include_directories(error_test
+        PRIVATE
+            ${CMAKE_SOURCE_DIR}/tests
+    )
+
     add_test(
         NAME error_test
         COMMAND error_test
@@ -112,6 +122,11 @@ if(AIDB_BUILD_TESTS)
     target_link_libraries(context_test
         PRIVATE
             aidb_core
+    )
+
+    target_include_directories(context_test
+        PRIVATE
+            ${CMAKE_SOURCE_DIR}/tests
     )
 
     add_test(
