@@ -26,6 +26,18 @@
 ## 验证命令
 
 ```powershell
+.\scripts\test.ps1
+```
+
+Fresh run:
+
+```powershell
+.\scripts\test.ps1 -Fresh
+```
+
+Manual equivalent:
+
+```powershell
 cmake --preset mingw-debug
 cmake --build --preset mingw-debug-build
 ctest --test-dir build/mingw-debug --output-on-failure

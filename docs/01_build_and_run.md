@@ -30,7 +30,13 @@ cmake --build --preset mingw-debug-build
 ## Test
 
 ```powershell
-ctest --test-dir build/mingw-debug --output-on-failure
+.\scripts\test.ps1
+```
+
+Fresh configure/build/test after removing the debug build outputs:
+
+```powershell
+.\scripts\test.ps1 -Fresh
 ```
 
 ## 默认约束
