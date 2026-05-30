@@ -45,6 +45,8 @@ endif()
 add_library(aidb_core STATIC
     src/core/context.c
     src/core/error.c
+    src/core/memory.c
+    src/core/arena.c
 )
 
 target_include_directories(aidb_core
@@ -132,5 +134,43 @@ if(AIDB_BUILD_TESTS)
     add_test(
         NAME context_test
         COMMAND context_test
+    )
+
+    add_executable(memory_test
+        tests/core/memory_test.c
+    )
+
+    target_include_directories(memory_test
+        PRIVATE
+            ${CMAKE_SOURCE_DIR}/tests
+    )
+
+    target_link_libraries(memory_test
+        PRIVATE
+            aidb_core
+    )
+
+    add_test(
+        NAME memory_test
+        COMMAND memory_test
+    )
+
+    add_executable(arena_test
+        tests/core/arena_test.c
+    )
+
+    target_include_directories(arena_test
+        PRIVATE
+            ${CMAKE_SOURCE_DIR}/tests
+    )
+
+    target_link_libraries(arena_test
+        PRIVATE
+            aidb_core
+    )
+
+    add_test(
+        NAME arena_test
+        COMMAND arena_test
     )
 endif()
