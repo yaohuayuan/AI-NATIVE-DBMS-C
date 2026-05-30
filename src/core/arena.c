@@ -1,5 +1,17 @@
 #include "aidb/arena.h"
 #include "aidb/memory.h"
+#include <stddef.h>
+#include <stdint.h>
+static size_t aidb_align_up(size_t value, size_t alignment)
+{
+    size_t remainder = value % alignment;
+
+    if (remainder == 0) {
+        return value;
+    }
+
+    return value + (alignment - remainder);
+}
 static size_t aidb_size_max(size_t left, size_t right)
 {
     return left > right ? left : right;
@@ -8,10 +20,11 @@ struct aidb_arena_block{
     struct aidb_arena_block *next;
     size_t capacity;
     size_t used;
+    max_align_t alignment_padding;
     unsigned char data[];
 };
 enum aidb_status aidb_arena_init(struct aidb_arena *arena,size_t default_block_size){
-    if(arena==NULL || default_block_size <= 0){
+    if(arena==NULL || default_block_size == 0){
         return AIDB_ERROR_INVALID_ARGUMENT;
     }
     arena->current_block = NULL;
@@ -50,12 +63,14 @@ void *aidb_arena_alloc(struct aidb_arena *arena, size_t size)
 {
     size_t capacity;
     struct aidb_arena_block *block;
+    size_t alignment;
+    size_t aligned_used;
     void *ptr;
 
     if (arena == NULL || size == 0) {
         return NULL;
     }
-
+    alignment = _Alignof(max_align_t);
     if (arena->current_block == NULL) {
         capacity = aidb_size_max(size, arena->default_block_size);
 
@@ -72,7 +87,10 @@ void *aidb_arena_alloc(struct aidb_arena *arena, size_t size)
         arena->current_block = block;
     }
 
-    if (arena->current_block->capacity - arena->current_block->used < size) {
+    
+    aligned_used = aidb_align_up(arena->current_block->used, alignment);
+    if ( aligned_used > arena->current_block->capacity ||
+        arena->current_block->capacity - aligned_used < size) {
         capacity = aidb_size_max(size, arena->default_block_size);
 
         block = aidb_malloc(sizeof(struct aidb_arena_block) + capacity);
@@ -87,9 +105,9 @@ void *aidb_arena_alloc(struct aidb_arena *arena, size_t size)
         arena->current_block->next = block;
         arena->current_block = block;
     }
-
-    ptr = arena->current_block->data + arena->current_block->used;
-    arena->current_block->used += size;
+    aligned_used = aidb_align_up(arena->current_block->used, alignment);
+    ptr = arena->current_block->data + aligned_used;
+    arena->current_block->used = aligned_used + size;
 
     return ptr;
 }

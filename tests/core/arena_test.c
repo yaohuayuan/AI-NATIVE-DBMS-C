@@ -1,4 +1,6 @@
 #include <stdio.h>
+#include <stddef.h>
+#include <stdint.h>
 #include <string.h>
 
 #include "aidb/arena.h"
@@ -58,6 +60,27 @@ int main(void)
     AIDB_TEST_ASSERT_TRUE(arena.first_block == NULL);
     AIDB_TEST_ASSERT_TRUE(arena.current_block == NULL);
     AIDB_TEST_ASSERT_TRUE(arena.default_block_size == 0);
+
+    struct aidb_arena align_arena;
+    AIDB_TEST_ASSERT_TRUE(aidb_arena_init(&align_arena, 64) == AIDB_OK);
+
+    void *align_p1 = aidb_arena_alloc(&align_arena, 1);
+    AIDB_TEST_ASSERT_TRUE(align_p1 != NULL);
+
+    void *align_p2 = aidb_arena_alloc(&align_arena, sizeof(max_align_t));
+    AIDB_TEST_ASSERT_TRUE(align_p2 != NULL);
+    AIDB_TEST_ASSERT_TRUE(((uintptr_t)align_p2 % _Alignof(max_align_t)) == 0);
+
+    max_align_t *aligned_value = (max_align_t *)align_p2;
+    (void)aligned_value;
+
+    unsigned char *aligned_bytes = align_p2;
+    memset(aligned_bytes, 0x55, sizeof(max_align_t));
+    for (size_t i = 0; i < sizeof(max_align_t); ++i) {
+        AIDB_TEST_ASSERT_TRUE(aligned_bytes[i] == 0x55);
+    }
+
+    aidb_arena_deinit(&align_arena);
 
     printf("arena_test passed.\n");
     return 0;
