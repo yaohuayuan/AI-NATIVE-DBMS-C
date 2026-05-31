@@ -47,6 +47,7 @@ add_library(aidb_core STATIC
     src/core/error.c
     src/core/memory.c
     src/core/arena.c
+    src/core/binary.c
 )
 
 target_include_directories(aidb_core
@@ -172,5 +173,24 @@ if(AIDB_BUILD_TESTS)
     add_test(
         NAME arena_test
         COMMAND arena_test
+    )
+
+    add_executable(binary_test
+        tests/core/binary_test.c
+    )
+
+    target_include_directories(binary_test
+        PRIVATE
+            ${CMAKE_SOURCE_DIR}/tests
+    )
+
+    target_link_libraries(binary_test
+        PRIVATE
+            aidb_core
+    )
+
+    add_test(
+        NAME binary_test
+        COMMAND binary_test
     )
 endif()
