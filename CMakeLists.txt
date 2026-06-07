@@ -48,6 +48,8 @@ add_library(aidb_core STATIC
     src/core/memory.c
     src/core/arena.c
     src/core/binary.c
+    src/core/vector.c
+    src/core/list.c
 )
 
 target_include_directories(aidb_core
@@ -192,5 +194,43 @@ if(AIDB_BUILD_TESTS)
     add_test(
         NAME binary_test
         COMMAND binary_test
+    )
+
+    add_executable(vector_test
+        tests/core/vector_test.c
+    )
+
+    target_include_directories(vector_test
+        PRIVATE
+            ${CMAKE_SOURCE_DIR}/tests
+    )
+
+    target_link_libraries(vector_test
+        PRIVATE
+            aidb_core
+    )
+
+    add_test(
+        NAME vector_test
+        COMMAND vector_test
+    )
+
+    add_executable(list_test
+        tests/core/list_test.c
+    )
+
+    target_include_directories(list_test
+        PRIVATE
+            ${CMAKE_SOURCE_DIR}/tests
+    )
+
+    target_link_libraries(list_test
+        PRIVATE
+            aidb_core
+    )
+
+    add_test(
+        NAME list_test
+        COMMAND list_test
     )
 endif()
