@@ -50,6 +50,7 @@ add_library(aidb_core STATIC
     src/core/binary.c
     src/core/vector.c
     src/core/list.c
+    src/core/string_utils.c
 )
 
 target_include_directories(aidb_core
@@ -232,5 +233,24 @@ if(AIDB_BUILD_TESTS)
     add_test(
         NAME list_test
         COMMAND list_test
+    )
+
+    add_executable(string_utils_test
+        tests/core/string_utils_test.c
+    )
+
+    target_include_directories(string_utils_test
+        PRIVATE
+            ${CMAKE_SOURCE_DIR}/tests
+    )
+
+    target_link_libraries(string_utils_test
+        PRIVATE
+            aidb_core
+    )
+
+    add_test(
+        NAME string_utils_test
+        COMMAND string_utils_test
     )
 endif()
