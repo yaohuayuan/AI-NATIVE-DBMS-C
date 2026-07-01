@@ -1,0 +1,68 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-test:
+    name: ${{ matrix.name }}
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Windows / MSVC
+            os: windows-latest
+
+          - name: Ubuntu / GCC
+            os: ubuntu-latest
+
+          - name: macOS / AppleClang
+            os: macos-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Configure Windows build
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: >
+          cmake -S . -B build
+          -A x64
+          -DAIDB_BUILD_TESTS=ON
+
+      - name: Build Windows
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: cmake --build build --config Debug --parallel
+
+      - name: Test Windows
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: ctest --test-dir build -C Debug --output-on-failure
+
+      - name: Configure Unix build
+        if: runner.os != 'Windows'
+        shell: bash
+        run: >
+          cmake -S . -B build
+          -DCMAKE_BUILD_TYPE=Debug
+          -DAIDB_BUILD_TESTS=ON
+
+      - name: Build Unix
+        if: runner.os != 'Windows'
+        shell: bash
+        run: cmake --build build --parallel
+
+      - name: Test Unix
+        if: runner.os != 'Windows'
+        shell: bash
+        run: ctest --test-dir build --output-on-failure
