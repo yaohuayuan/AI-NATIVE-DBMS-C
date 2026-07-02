@@ -5,6 +5,7 @@
 
 #include "aidb/arena.h"
 #include "aidb/error.h"
+#include "platform/align.h"
 #include "support/test_assert.h"
 
 int main(void)
@@ -67,16 +68,16 @@ int main(void)
     void *align_p1 = aidb_arena_alloc(&align_arena, 1);
     AIDB_TEST_ASSERT_TRUE(align_p1 != NULL);
 
-    void *align_p2 = aidb_arena_alloc(&align_arena, sizeof(max_align_t));
+    void *align_p2 = aidb_arena_alloc(&align_arena, sizeof(union aidb_platform_max_align));
     AIDB_TEST_ASSERT_TRUE(align_p2 != NULL);
-    AIDB_TEST_ASSERT_TRUE(((uintptr_t)align_p2 % _Alignof(max_align_t)) == 0);
+    AIDB_TEST_ASSERT_TRUE(((uintptr_t)align_p2 % AIDB_PLATFORM_MAX_ALIGN) == 0);
 
-    max_align_t *aligned_value = (max_align_t *)align_p2;
+    union aidb_platform_max_align *aligned_value = (union aidb_platform_max_align *)align_p2;
     (void)aligned_value;
 
     unsigned char *aligned_bytes = align_p2;
-    memset(aligned_bytes, 0x55, sizeof(max_align_t));
-    for (size_t i = 0; i < sizeof(max_align_t); ++i) {
+    memset(aligned_bytes, 0x55, sizeof(union aidb_platform_max_align));
+    for (size_t i = 0; i < sizeof(union aidb_platform_max_align); ++i) {
         AIDB_TEST_ASSERT_TRUE(aligned_bytes[i] == 0x55);
     }
 

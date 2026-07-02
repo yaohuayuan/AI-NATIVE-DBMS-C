@@ -56,6 +56,8 @@ add_library(aidb_core STATIC
 target_include_directories(aidb_core
     PUBLIC
         ${CMAKE_SOURCE_DIR}/include
+    PRIVATE
+        ${CMAKE_SOURCE_DIR}/src
 )
 
 target_compile_definitions(aidb_core
@@ -165,6 +167,7 @@ if(AIDB_BUILD_TESTS)
 
     target_include_directories(arena_test
         PRIVATE
+            ${CMAKE_SOURCE_DIR}/src
             ${CMAKE_SOURCE_DIR}/tests
     )
 

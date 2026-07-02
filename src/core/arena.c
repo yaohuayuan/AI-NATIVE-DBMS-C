@@ -1,5 +1,7 @@
 #include "aidb/arena.h"
 #include "aidb/memory.h"
+#include "platform/align.h"
+
 #include <stddef.h>
 #include <stdint.h>
 static size_t aidb_align_up(size_t value, size_t alignment)
@@ -20,7 +22,7 @@ struct aidb_arena_block{
     struct aidb_arena_block *next;
     size_t capacity;
     size_t used;
-    max_align_t alignment_padding;
+    union aidb_platform_max_align alignment_padding;
     unsigned char data[];
 };
 enum aidb_status aidb_arena_init(struct aidb_arena *arena,size_t default_block_size){
@@ -70,7 +72,7 @@ void *aidb_arena_alloc(struct aidb_arena *arena, size_t size)
     if (arena == NULL || size == 0) {
         return NULL;
     }
-    alignment = _Alignof(max_align_t);
+    alignment = AIDB_PLATFORM_MAX_ALIGN;
     if (arena->current_block == NULL) {
         capacity = aidb_size_max(size, arena->default_block_size);
 
