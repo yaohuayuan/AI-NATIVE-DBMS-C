@@ -84,6 +84,9 @@
 
 模块级 migration decisions 将在真正开始迁移对应 DBMS 模块后按需创建。旧 DBMS_C 始终保持只读参考，旧模块存在不代表新项目已经完成对应能力。
 
-## Planned documentation areas
+## Research 文档
 
-Research 文档尚未创建：research prototype、research questions、experiment plan、metrics、datasets。仅在后续单独任务中创建，不提供不存在的链接。
+- [AI-Native DBMS 研究原型定义](research/research_prototype.md)
+- [AI-Native DBMS 实验计划](research/experiment_plan.md)
+
+独立的 research questions、metrics 和 datasets 文档尚未创建；当前定义分别保存在实验计划的对应章节中，不提供不存在的链接。
