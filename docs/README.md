@@ -75,11 +75,15 @@
 - [Handmade AI Runtime](11_handmade_ai_runtime.md)
 - [AI_MATCH](12_ai_match_operator.md)
 
+## Migration 文档
+
+- [迁移文档入口](migration/README.md)
+- [旧项目事实清单](migration/legacy_inventory.md)
+- [Legacy 到 AIDB 映射](migration/legacy_to_aidb_mapping.md)
+- [迁移规则](migration/migration_rules.md)
+
+模块级 migration decisions 将在真正开始迁移对应 DBMS 模块后按需创建。旧 DBMS_C 始终保持只读参考，旧模块存在不代表新项目已经完成对应能力。
+
 ## Planned documentation areas
 
-以下区域尚未创建，本批不提供不存在的链接：
-
-- Migration：legacy inventory、legacy-to-aidb mapping、migration rules、migration decisions。
-- Research：research prototype、research questions、experiment plan、metrics、datasets。
-
-这些文档只能在后续单独任务中创建；旧 DBMS_C 始终保持只读参考，旧模块存在不代表新项目已经完成对应能力。
+Research 文档尚未创建：research prototype、research questions、experiment plan、metrics、datasets。仅在后续单独任务中创建，不提供不存在的链接。
