@@ -1,13 +1,20 @@
 # 项目概览
 
-AI-NATIVE-DBMS-C 是一个面向 AI 原生语义查询处理的 C 语言数据库原型系统，代码短名为 `aidb`。它关注的问题不是“怎样在 SQL 外面包一层聊天接口”，而是“怎样把 LLM 调用放进 DBMS 查询执行链，成为可计划、可解释、可缓存、可测试的语义算子”。
+AI-NATIVE-DBMS-C 是一个使用 C17 开发的 AI-native DBMS 研究原型，代码短名为 `aidb`。项目关注的问题不是“怎样在 SQL 外面包一层聊天接口”，而是“怎样把模型调用放进 DBMS 查询执行链，成为可计划、可解释、可缓存、可测试和可度量的语义算子”。
 
-长期方向分为三条线：
+## 项目分层目标
 
-- C DBMS Core：storage、catalog、parser、planner、executor、explain、optimizer 等数据库基础能力。
-- Handmade AI Runtime：先以确定性 mock 模型为核心，再把真实 API 调用隔离到显式接口之后。
-- First-class LLM Semantic Operators：以 `AI_MATCH` 为代表，让语义判断进入 plan/scan/explain/cache/log/optimizer 流程。
+- **DBMS baseline**：storage、record、buffer、transaction、metadata、parser、plan、scan、executor 和基础 index。
+- **AI-native runtime**：mock-first 的模型 provider、AI operator runtime、缓存、批处理与调用度量。
+- **研究原型**：围绕 AI operator 与普通关系算子的混合执行设计可重复实验，而不是复制完整 PostgreSQL/MySQL。
+- **展示能力**：CLI、NL2SQL、SQL repair、plan explanation 等可作为演示入口，但不自动等同于论文创新。
 
-当前 `v0.1 skeleton` 只提供可构建、可测试的工程骨架。`v0.1.1` 的重点是冻结项目规范，包括文档语言、命名、目录职责、内存和所有权、错误处理、测试、Git、CMake 和 AI 辅助开发规则。
+## 当前边界
 
-在规范冻结完成前，不实现 memory、vector、JSON、net、AI Runtime、DBMS Core 或 `AI_MATCH` 的功能代码。
+项目当前处于 Core Containers 阶段。`error`、`context`、`memory`、`arena`、platform alignment、`binary`、`vector`、`list`、`string_utils` 已实现并测试；`rbt` 正在开发；`map`、`byte_buffer` 和所有 DBMS/AI 能力尚未实现。
+
+当前 executable 只是 minimal CLI/bootstrap，不是 SQL CLI。详细事实状态以 [文档索引与模块状态矩阵](README.md) 为准，推进顺序以 [ROADMAP](../ROADMAP.md) 为准。
+
+## 迁移原则
+
+旧 DBMS_C 只用于代码考古、模块分析和设计参考。新项目重新设计 public API、ownership、错误处理和测试，不直接复制旧文件、旧命名或旧接口，也不把旧项目实现写成新项目已经完成。

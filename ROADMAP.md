@@ -1,39 +1,62 @@
 # ROADMAP
 
-本路线图使用 `vX.Y.Z` 版本格式。`X` 是主版本号，`Y` 是阶段版本号，`Z` 是当前阶段内的小里程碑。详细规则见 [docs/14_versioning.md](docs/14_versioning.md)。
+本文只维护阶段、依赖、当前里程碑、完成状态和下一步。详细模块状态以 [docs/README.md](docs/README.md) 为唯一矩阵，版本推进规则见 [docs/14_versioning.md](docs/14_versioning.md)。
 
-## 已完成
+## 当前阶段：Core Containers
 
-- [x] `v0.1.0` 工程骨架初始化
-- [x] `v0.1.1` 项目规范冻结
+### Completed
 
-## 当前完成
+- [x] 工程骨架、C17 构建基线和工程规范
+- [x] `error`
+- [x] `context`
+- [x] `memory`
+- [x] `arena`
+- [x] platform alignment
+- [x] `binary`
+- [x] `vector`
+- [x] `list`
+- [x] `string_utils`
 
-- [x] `v0.1.2` Core Foundation 设计与版本号规范
+以上模块已有实现和测试，已接入 CMake/CTest，并由当前 GitHub Actions workflow 在 Windows/MSVC、Ubuntu/GCC、macOS/AppleClang 上验证。
 
-`v0.1.2` 是文档和设计阶段，不包含 `error/result/context` 的代码实现。
+### In progress
 
-## 后续
+- [ ] `rbt`：存在未跟踪实现；尚未接入 CMake，尚无正式测试，不属于已完成模块。
 
-- [ ] `v0.1.3` `error/result/context` 最小实现
-- [ ] `v0.1.4` `memory + arena`
-- [ ] `v0.1.5` `vector + string_utils`
-- [ ] `v0.2.0` DBMS Core baseline
-- [ ] `v0.3.0` Explain Plan / Scan
-- [ ] `v0.4.0` Handmade JSON + MockModel + AiClient 接口
-- [ ] `v0.5.0` `AI_MATCH + AiCache + AiCallLog`
-- [ ] `v1.0.0` 论文级原型机
+### Next
 
-## 阶段说明
+- [ ] 完成 `rbt` 的公开契约、实现、测试和三平台验证
+- [ ] 实现以 `rbt` 为基础的 `map`
 
-`v0.1.x` 聚焦工程骨架、项目规范和 Core Foundation。这个阶段只建立最低限度的工程纪律和基础抽象，不提前实现 DBMS、JSON、net、AI 或优化器。
+### Planned
 
-`v0.2.0` 开始进入 DBMS Core baseline，包括 storage、page、file manager、buffer、record、parser、plan/scan。
+- [ ] `byte_buffer`
+- [ ] DBMS baseline
+- [ ] AI runtime 与 AI operator
+- [ ] 实验、benchmark、演示和研究发布
 
-`v0.3.0` 聚焦 Explain Plan / Scan，为后续 AI 算子的可解释执行路径打基础。
+## 后续阶段
 
-`v0.4.0` 引入 Handmade JSON、确定性的 MockModel 和 AiClient 接口。默认测试仍然不调用真实 API。
+| 阶段 | 前置依赖 | 最小交付结果 | 状态 |
+|---|---|---|---|
+| Core Containers | Core Foundation | `rbt`、`map`、`byte_buffer` 具备测试和构建接入 | 进行中 |
+| Storage baseline | Core Containers | block/page/file、record/schema/layout 的最小可测试链路 | Planned |
+| Buffer and transaction | Storage baseline | buffer manager、log/WAL、transaction/recovery 的受控实现 | Planned |
+| Query system | Storage 与 transaction 基线 | tokenizer/parser、expression/predicate、scan/plan/executor | Planned |
+| Metadata and index | Query system 基础接口 | catalog/metadata 和一个基础索引路径 | Planned |
+| AI-native runtime | 可执行 DBMS 链路 | provider 抽象、mock-first runtime、AI operator 接口 | Planned |
+| AI-aware execution | AI runtime 与基准查询 | 缓存、批处理、成本感知执行或优化主线 | Planned |
+| Research release | 可重复实验链路 | benchmark、指标、实验报告、CLI/demo 和可复现发布 | Planned |
 
-`v0.5.0` 引入 `AI_MATCH`、`AiCache`、`AiCallLog` 和最小谓词重排。
+## 阶段完成标准
 
-`v1.0.0` 目标是论文级原型机：AI Operator Runtime、AI-aware Optimizer、Benchmark 和技术报告基本完成。
+一个模块只有在满足以下条件后才能从 In progress/Planned 移入 Completed：
+
+- public/internal 边界和 ownership 已记录；
+- 实现已接入 CMake；
+- 独立测试已注册到默认 CTest；
+- 本地验证通过；
+- 当前三平台 CI 通过；
+- 相关文档与实际代码状态一致。
+
+后续阶段不得因为目录、头文件或设计文档已经存在，就提前标记为 implemented 或 tested。

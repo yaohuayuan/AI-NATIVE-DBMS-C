@@ -2,37 +2,21 @@
 
 代码短名：`aidb`
 
-AI-NATIVE-DBMS-C 是一个面向 AI 原生语义查询处理的 C 语言数据库原型系统。项目目标不是给 DBMS 套一个 ChatGPT 外壳，而是探索将 LLM 调用抽象为 DBMS 查询执行链中的一等语义算子。
+AI-NATIVE-DBMS-C 是一个使用 C17 开发的 AI-native DBMS 研究原型。项目目标是先建立可测试的 DBMS 端到端执行链，再探索把模型调用作为可计划、可解释、可缓存和可度量的查询算子，而不是在数据库外层简单包装聊天接口。
 
-当前版本：`v0.1.2`
+## 当前状态
 
-当前阶段：Core Foundation 设计与版本号规范。
+项目当前处于 **Core Containers** 阶段。
 
-下一阶段：`v0.1.3 error/result/context` 最小实现。
-
-`v0.1.2` 仍然是文档和设计阶段，不包含 `error/result/context` 的代码实现。
-
-## 项目不是
-
-- 不是工业级数据库。
-- 不是 C 语言版 LangChain。
-- 不是简单 ChatGPT 外壳。
-- 不是完整分布式数据库。
-- 不是完整向量数据库。
-- 不是一开始就实现完整优化器。
-
-## 当前已具备
-
-- 最小 CMake 工程。
-- `aidb` 可执行文件。
-- `aidb_core` 基础库目标。
-- `basic_core_test`。
-- 基础目录骨架。
-- 中文文档与规范体系。
-- Core Foundation 设计文档。
-- 版本号规范文档。
+- 已实现、测试并接入 CMake/CTest：`error`、`context`、`memory`、`arena`、platform alignment、`binary`、`vector`、`list`、`string_utils`。
+- 上述能力由当前 GitHub Actions workflow 在 Windows/MSVC、Ubuntu/GCC 和 macOS/AppleClang 上验证。
+- `rbt` 正在开发：存在未跟踪实现，但尚未接入 CMake，也没有正式测试。
+- 当前可执行程序只是 minimal CLI/bootstrap，不是 SQL CLI。
+- `map`、`byte_buffer`、DBMS、AI runtime、实验和发布能力仍处于设计或规划阶段。
 
 ## 构建与测试
+
+Windows + MinGW 本地入口：
 
 ```powershell
 cmake --preset mingw-debug
@@ -40,28 +24,27 @@ cmake --build --preset mingw-debug-build
 ctest --test-dir build/mingw-debug --output-on-failure
 ```
 
-运行当前最小可执行文件：
+也可以运行统一测试脚本：
+
+```powershell
+.\scripts\test.ps1
+```
+
+运行当前 minimal CLI/bootstrap：
 
 ```powershell
 .\bin\debug\aidb.exe
 ```
 
-## 后续路线
+更多环境与命令见 [构建与运行](docs/01_build_and_run.md)。
 
-- `v0.1.3`：`error/result/context` 最小实现。
-- `v0.1.4`：`memory + arena`。
-- `v0.1.5`：`vector + string_utils`。
-- `v0.2.0`：DBMS Core baseline。
-- `v0.3.0`：Explain Plan / Scan。
-- `v0.4.0`：Handmade JSON + MockModel + AiClient 接口。
-- `v0.5.0`：`AI_MATCH + AiCache + AiCallLog`。
-- `v1.0.0`：论文级原型机。
+## 文档入口
 
-更详细的阶段拆分见 [ROADMAP.md](ROADMAP.md)，版本号规则见 [docs/14_versioning.md](docs/14_versioning.md)。
+- [文档索引与详细模块状态矩阵](docs/README.md)
+- [开发路线图](ROADMAP.md)
+- [项目概览](docs/00_project_overview.md)
+- [工程规范](docs/03_coding_style.md)
 
-## 安全说明
+## 下一步
 
-- 不要提交 `.env`。
-- 不要提交 API Key。
-- 真实 API 测试以后放入 `tests/manual`，不进入默认 CTest。
-- 默认测试不能联网，不能调用真实 API，不能依赖 API Key。
+当前先完成 `rbt` 的实现、正式测试和构建接入，再实现 `map`；`byte_buffer` 及后续 DBMS/AI 阶段按 [ROADMAP](ROADMAP.md) 推进。

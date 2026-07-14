@@ -1,56 +1,46 @@
-# v0.1.5 Binary Encoding 设计
+# Binary Encoding 设计
 
-## 背景
+## Status
 
-AI-NATIVE-DBMS-C 后续会逐步引入 Page、File、Log、Record 等模块。这些模块最终都需要把数据写入磁盘文件，并在之后稳定地读回。
+- `binary`：implemented、tested、registered in CMake/CTest、cross-platform verified。
+- `byte_buffer`：planned，尚无 public header、实现、测试或 CMake 接入。
 
-磁盘格式不能直接依赖 C 结构体的内存布局。直接 `fwrite(struct)` 会带来几个问题：
+## 1. 设计背景
 
-- 不同机器的大小端可能不同。
-- 结构体 padding 由编译器和 ABI 决定。
-- 字段对齐、布局和未来编译选项变化都可能影响磁盘内容。
-- 一旦磁盘格式依赖本机内存布局，跨平台读写和长期兼容会变得不可控。
+Page、File、Log、Record 等模块需要稳定地把数据写入字节序列。磁盘格式不能直接依赖 C 结构体内存布局，因为机器字节序、编译器 padding、ABI 和对齐规则都可能变化。
 
-因此 v0.1.5 需要先建立一个明确的 binary encoding 层，用固定规则在数字和字节之间转换。
+因此 binary 层集中实现固定宽度整数与字节之间的转换，后续模块不各自手写位运算，也不直接 `fwrite(struct)` 作为持久格式。
 
-## 和旧 ByteBuffer 的关系
+## 2. 与 byte_buffer 的边界
 
-旧 ByteBuffer 同时承担了两类职责：
+旧项目的 ByteBuffer 同时承担 position/limit/bounds 和整数编码。新项目拆成两层：
 
-- 缓冲区的 position、limit、offset 和越界检查。
-- 整数拆字节和组装读写。
+- `binary`：无状态的固定宽度整数编码，当前已实现。
+- `byte_buffer`：计划中的有边界缓冲区，负责 position、limit、offset、参数和越界检查。
 
-新项目把这两类职责拆成两层：
+依赖方向保持为：
 
-- `binary`：只负责数字和字节之间的固定编码。
-- `byte_buffer`：后续再负责 position、limit、offset、越界检查和更高层的缓冲区操作。
+```text
+byte_buffer -> binary
+page        -> byte_buffer
+file/log/record -> page or byte_buffer
+```
 
-本阶段只实现 `binary` 设计，不实现 `byte_buffer`。
+## 3. 字节序
 
-## 字节序规则
+AIDB 计划中的磁盘页、日志和记录格式统一使用 little-endian。binary 显式读写 little-endian 字节序，不把主机内存表示直接复制为磁盘格式。
 
-AIDB 的磁盘页、日志和记录格式统一使用 little-endian。
+网络协议如有不同字节序要求，应在未来网络层单独设计，不改变当前磁盘编码规则。
 
-binary 模块会显式提供 `read/write little-endian` 函数，而不是把本机内存布局直接写入文件。无论当前机器是 little-endian 还是 big-endian，磁盘上的字节顺序都应保持一致。
+## 4. 当前职责与 API
 
-后续如果引入网络协议，可以单独考虑 network byte order，但这不属于 v0.1.5 的范围。
+binary：
 
-## 模块职责
-
-binary 是一个无状态工具层：
-
-- 不分配内存。
-- 不拥有 `data` 指针。
-- 不管理 position 或 limit。
-- 不做缓冲区越界检查。
-- 不访问文件。
-- 只负责在 `unsigned char *` 上读写固定宽度整数。
-
-更高层模块需要先保证传入的地址有效、缓冲区长度足够，再调用 binary。
-
-## 初始 API 草案
-
-以下 API 只作为设计草案记录在文档中。本阶段不创建头文件。
+- 不分配或拥有内存；
+- 不管理 position、limit 或 capacity；
+- 不做 NULL 和 bounds 检查；
+- 不访问文件；
+- 只在调用方提供的有效地址上读写固定宽度整数。
 
 ```c
 uint16_t aidb_read_u16_le(const unsigned char *data);
@@ -70,41 +60,14 @@ void aidb_write_i32_le(unsigned char *data, int32_t value);
 void aidb_write_i64_le(unsigned char *data, int64_t value);
 ```
 
-## NULL 参数策略
+NULL 或不足长度的 data 是调用者错误。计划中的 byte_buffer/page 层负责在调用 binary 前完成边界验证。
 
-第一版 read/write 函数如果传入 `NULL`，行为定义为调用者错误。
+## 5. 测试
 
-binary 层保持简单、低开销，不负责参数防御。后续 `byte_buffer` 层负责做边界检查、参数检查和错误返回。
+`binary_test` 已覆盖 u16/u32/u64、i16/i32/i64 的 little-endian 布局、读写回环和代表性边界值。测试不把 NULL 当作 binary 层需要防御的输入。
 
-## 测试计划
+该测试已注册到默认 CTest，并由当前 Windows/MSVC、Ubuntu/GCC、macOS/AppleClang workflow 验证。
 
-后续新增 `tests/core/binary_test.c`，覆盖以下内容：
+## 6. 后续完成条件
 
-- `u16`、`u32`、`u64` 的 little-endian 字节布局。
-- `i16`、`i32`、`i64` 的有符号值写入和读回。
-- 特殊值：
-  - `0`
-  - `1`
-  - `0x12345678`
-  - `UINT16_MAX`
-  - `UINT32_MAX`
-  - `UINT64_MAX`
-  - `-1`
-  - `INT32_MIN`
-  - `INT32_MAX`
-
-第一版不测试 `NULL`，因为 binary 层不负责参数防御。
-
-## 和后续模块的关系
-
-后续依赖方向应保持清晰：
-
-```text
-byte_buffer -> binary
-page        -> byte_buffer
-file/log/record -> page 或 byte_buffer
-```
-
-`byte_buffer` 会调用 binary 完成固定宽度整数编码。`page` 会调用 `byte_buffer` 读写页内字段。`file`、`log`、`record` 会间接依赖 binary，从而形成稳定、可移植的磁盘格式。
-
-后续 Page、File、Log、Record 不应各自手写位运算。固定宽度整数的拆字节规则应集中在 binary 层，避免格式规则散落在多个模块中。
+`byte_buffer` 只有在 public API、ownership、capacity/position/limit 规则、bounds failure、实现、独立测试、CMake/CTest 和三平台验证全部完成后，才能从 `planned` 更新为 `tested`。

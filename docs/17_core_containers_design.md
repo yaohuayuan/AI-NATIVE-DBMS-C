@@ -1,61 +1,37 @@
-# v0.1.6 Core Containers 设计
+# Core Containers 设计
 
-## 1. 阶段目标
+## Status
 
-`v0.1.6` 只做 Core Containers 的设计文档，不实现任何容器代码，也不创建新的头文件或源文件。
+| 模块 | 状态 |
+|---|---|
+| vector | implemented、tested、registered in CMake/CTest、cross-platform verified |
+| list | implemented、tested、registered in CMake/CTest、cross-platform verified |
+| string_utils | implemented、tested、registered in CMake/CTest、cross-platform verified |
+| rbt | in progress；存在未跟踪实现，未接入 CMake，无正式测试 |
+| map | planned |
+| byte_buffer | planned |
 
-Core Containers 是后续 Parser、Metadata、Plan、Record、File Manager、AI Runtime 的基础设施。DBMS 不能长期只依赖 `malloc/free` 和裸数组：裸数组很难统一处理扩容、元素拷贝、所有权、错误返回和测试边界；业务模块各自手写容器逻辑，也会让内存语义分散到多个地方。
+本表只记录本设计文档覆盖的模块；项目唯一完整状态矩阵见 [docs/README](README.md)。
 
-本阶段先明确容器边界、命名规范、所有权规则和实现顺序，让后续每个容器都能小步实现、小步测试。
+## 1. 设计目标
 
-## 2. 为什么需要 Core Containers
+Core Containers 为 Parser、Metadata、Plan、Record、File Manager 和 AI Runtime 提供统一动态集合与查找能力，避免业务模块各自手写扩容、节点、ownership 和错误路径。
 
-后续模块会频繁处理动态集合和 key-value 查询：
+统一规则：
 
-- `struct aidb_vector` 用于动态数组、字段列表、token 列表、plan 列表、表达式子节点列表。
-- `string_utils` 用于字符串复制、比较、拼接、大小写处理，以及稳定的字符串所有权转移。
-- `struct aidb_list` 用于链式结构、等待队列、回收列表、日志链等不适合频繁移动元素的场景。
-- `struct aidb_rbt` 和 `struct aidb_map` 用于 key-value 映射、字段 offset 查找、文件句柄缓存、元数据缓存等需要稳定查找语义的场景。
+- public symbol 使用 `aidb_` 前缀和 `snake_case`。
+- 允许非指针 typedef，例如 `typedef struct aidb_vector aidb_vector;`。
+- 禁止隐藏指针 typedef和自定义 `_t` 后缀类型。
+- stack/embedded container 使用 `init/deinit`。
+- 内部内存使用 `aidb_malloc`、`aidb_calloc`、`aidb_realloc`、`aidb_free`。
+- status API 使用 `enum aidb_status` 和领域相关 out 参数。
+- 每个容器明确元素、payload、key 和 value 的 ownership。
 
-这些能力应集中在 core 层，而不是散落在 parser、storage、metadata 或 ai runtime 内部。
+旧 DBMS_C 的容器只作为算法和行为参考；新项目不复制旧 API、命名或所有权模型。
 
-## 3. 和旧项目数据结构的关系
+## 2. vector
 
-旧项目中已经有过动态数组、链表、映射和红黑树等数据结构经验。新项目不直接照搬旧命名、旧接口或旧所有权模型，而是按当前 C 项目规范重新设计：
-
-- 所有公开符号使用 `aidb_` 前缀。
-- 函数名使用 `snake_case`。
-- 失败路径优先返回 `enum aidb_status`。
-- 公开结构体保留 `struct aidb_vector`、`struct aidb_list`、`struct aidb_map`、`struct aidb_rbt` tag。
-- 公开结构体允许增加非指针 typedef，例如 `typedef struct aidb_vector aidb_vector;`。
-- 生命周期使用 `init/deinit` 语义。
-- 堆内存统一通过 `aidb_malloc`、`aidb_calloc`、`aidb_realloc`、`aidb_free`。
-- API 文档必须明确元素、key、value、字符串和节点的所有权。
-
-本项目允许非指针 typedef，但不使用隐藏结构体指针的 typedef，也不定义自定义 `_t` 后缀类型名。函数声明和定义中应把指针写清楚，例如 `aidb_vector *vector`，而不是把指针藏进类型别名。
-
-## 4. 分阶段实现顺序
-
-建议实现节奏如下：
-
-- `v0.1.6`：Core Containers 设计文档。
-- `v0.1.7`：`struct aidb_vector`。
-- `v0.1.8`：`string_utils`。
-- `v0.1.9`：`struct aidb_list`。
-- `v0.1.10`：`struct aidb_rbt` + `struct aidb_map`。
-- `v0.1.11`：`byte_buffer`。
-- `v0.1.12`：`block_id` + `page` + `file_manager` 最小存储层。
-
-不一次性实现所有容器，原因是：
-
-- `struct aidb_vector` 最简单，适合先建立泛型元素存储规则、扩容规则和析构规则。
-- `string_utils` 简单但高频，应该尽早确定字符串复制、比较和释放的所有权语义。
-- `struct aidb_list` 适合链式场景，但不是所有列表都应该使用链表；先有 vector 能避免过早依赖链表。
-- `struct aidb_rbt` 和 `struct aidb_map` 最复杂，放在 vector/list 之后更稳，也便于复用已验证的内存和测试模式。
-
-## 5. aidb_vector 设计草案
-
-`struct aidb_vector` 是连续内存动态数组，保存固定大小元素。它不理解元素内部结构，只按 `element_size` 拷贝字节。
+`aidb_vector` 是保存固定大小元素的连续动态数组：
 
 ```c
 typedef struct aidb_vector aidb_vector;
@@ -66,157 +42,103 @@ struct aidb_vector {
     size_t capacity;
     size_t element_size;
 };
-
-enum aidb_status aidb_vector_init(aidb_vector *vector, size_t element_size);
-void aidb_vector_deinit(aidb_vector *vector);
-
-enum aidb_status aidb_vector_reserve(aidb_vector *vector, size_t capacity);
-enum aidb_status aidb_vector_push_back(aidb_vector *vector, const void *element);
-
-void *aidb_vector_at(aidb_vector *vector, size_t index);
-const void *aidb_vector_at_const(const aidb_vector *vector, size_t index);
-
-void aidb_vector_clear(aidb_vector *vector);
 ```
 
-初始规则：
+当前能力：
 
-- `aidb_vector_init` 不预分配或只做最小初始化，具体策略在实现阶段决定。
-- `aidb_vector_push_back` 按值拷贝 `element_size` 字节。
-- vector 不自动析构元素内部指针；如元素拥有额外资源，调用方负责在 `clear/deinit` 前处理。
-- `aidb_vector_at` 越界时第一版可返回 `NULL`，后续也可以提供返回 `enum aidb_status` 的安全访问接口。
+- `aidb_vector_init` / `aidb_vector_deinit`
+- `aidb_vector_size` / `aidb_vector_capacity`
+- `aidb_vector_reserve` / `aidb_vector_push_back`
+- `aidb_vector_at` / `aidb_vector_at_const`
+- `aidb_vector_clear`
 
-## 6. string_utils 设计草案
+vector 按值复制 `element_size` 字节，不自动析构元素内部指针。越界或无效访问通过 pointer `NULL` 表达；会失败的变更操作返回 `enum aidb_status`。
 
-字符串工具层不做复杂字符串对象，第一版只提供高频、低风险函数：
+`vector_test` 已覆盖初始化、扩容、插入、访问、清空和错误路径，并注册到默认 CTest。
 
-```c
-char *aidb_string_duplicate(const char *text);
-int aidb_string_equal(const char *left, const char *right);
-enum aidb_status aidb_string_concat(const char *left, const char *right, char **out);
-void aidb_string_to_lower_ascii(char *text);
-void aidb_string_to_upper_ascii(char *text);
-```
+## 3. list
 
-设计规则：
-
-- `aidb_string_duplicate` 返回由 `aidb_malloc` 分配的新字符串，调用方用 `aidb_free` 释放。
-- `aidb_string_concat` 通过 `out` 返回新分配字符串，失败时不泄漏内存。
-- 大小写转换第一版只处理 ASCII，避免提前引入 Unicode 复杂度。
-- NULL 参数策略在每个函数文档中明确；返回 `enum aidb_status` 的函数负责给出可测试的错误路径。
-
-## 7. aidb_list 设计草案
-
-`struct aidb_list` 用于节点稳定、插入删除频繁、元素不需要连续存储的场景。
+`aidb_list` 用于节点地址稳定、两端插入/删除或不需要连续存储的场景：
 
 ```c
-struct aidb_list_node;
-
+typedef struct aidb_list_node aidb_list_node;
 typedef struct aidb_list aidb_list;
 
 struct aidb_list {
-    struct aidb_list_node *head;
-    struct aidb_list_node *tail;
+    aidb_list_node *head;
+    aidb_list_node *tail;
     size_t size;
     size_t element_size;
 };
-
-enum aidb_status aidb_list_init(aidb_list *list, size_t element_size);
-void aidb_list_deinit(aidb_list *list);
-
-enum aidb_status aidb_list_append(aidb_list *list, const void *element);
-enum aidb_status aidb_list_prepend(aidb_list *list, const void *element);
-void aidb_list_clear(aidb_list *list);
 ```
 
-初始规则：
+当前能力：
 
-- list 节点内部结构不对外暴露。
-- list 按值保存元素，不自动释放元素内部指针。
-- 如未来需要 intrusive list，应作为单独设计，不混入第一版 `struct aidb_list`。
+- `aidb_list_init` / `aidb_list_deinit`
+- `aidb_list_size` / `aidb_list_is_empty`
+- `aidb_list_push_front` / `aidb_list_push_back`
+- `aidb_list_pop_front` / `aidb_list_pop_back`
+- `aidb_list_front` / `aidb_list_back` 及 const 版本
+- `aidb_list_clear`
 
-## 8. aidb_rbt 与 aidb_map 设计草案
+节点布局保持 internal。list 按值保存元素，不自动释放元素内部指针；intrusive list 如未来需要，应单独设计。
 
-`struct aidb_rbt` 是有序树基础结构，`struct aidb_map` 是面向业务的 key-value 映射。第一版可以先让 map 使用 rbt 实现，但对外只暴露 map 语义。
+`list_test` 已覆盖两端操作、访问、清空、空列表和错误路径，并注册到默认 CTest。
 
-```c
-typedef struct aidb_rbt aidb_rbt;
-typedef struct aidb_map aidb_map;
+## 4. string_utils
 
-struct aidb_rbt;
+当前字符串工具保持小而明确，不引入复杂字符串对象或完整 Unicode 层：
 
-enum aidb_status aidb_rbt_init(
-    aidb_rbt *tree,
-    int (*compare)(const void *left, const void *right)
-);
-void aidb_rbt_deinit(aidb_rbt *tree);
+- `aidb_string_duplicate` / `aidb_string_duplicate_n`
+- `aidb_string_equal`
+- `aidb_string_starts_with` / `aidb_string_ends_with`
+- `aidb_string_to_lower_ascii` / `aidb_string_to_upper_ascii`
+- `aidb_string_concat`
 
-struct aidb_map {
-    aidb_rbt *tree;
-    size_t key_size;
-    size_t value_size;
-    int (*compare)(const void *left, const void *right);
-};
+返回 `char *` 的复制函数产生 owned string，调用方用 `aidb_free` 释放；分配或非法输入失败时返回 `NULL`。`aidb_string_concat` 使用 `enum aidb_status` 和 `char **out_text`，失败时输出保持为文档规定的安全状态。大小写转换只处理 ASCII。
 
-enum aidb_status aidb_map_init(
-    aidb_map *map,
-    size_t key_size,
-    size_t value_size,
-    int (*compare)(const void *left, const void *right)
-);
-void aidb_map_deinit(aidb_map *map);
+`string_utils_test` 已覆盖复制、比较、前后缀、拼接、ASCII 大小写和 NULL/失败语义，并注册到默认 CTest。
 
-enum aidb_status aidb_map_put(aidb_map *map, const void *key, const void *value);
-void *aidb_map_get(aidb_map *map, const void *key);
-int aidb_map_contains(const aidb_map *map, const void *key);
-```
+## 5. rbt（in progress）
 
-说明：
+当前工作区存在未跟踪 `rbt.h` 和 `rbt.c`，但它们未进入 CMake、没有 `rbt_test`，因此不能标记为 implemented、tested 或 cross-platform verified。
 
-- compare 参数使用显式函数指针声明，不通过 typedef 隐藏指针。
-- `struct aidb_map` 按值拷贝 key 和 value。
-- 对字符串 key 的 map 可以后续单独提供 helper，但第一版 map 不隐式复制字符串内容。
-- 删除、迭代器和范围查询可以后续扩展，不进入第一版最小接口。
+当前设计方向是：
 
-## 9. 所有权与错误处理
+- caller-owned tree 使用 `init/deinit`；
+- tree 拥有内部 sentinel 和 node；
+- stored payload 是 borrowed，tree 不复制或释放 payload；
+- compare callback 提供严格排序；
+- duplicate 不重复插入，并通过领域 out 参数报告；
+- pointer-returning find 在未找到或失败时返回 `NULL`；
+- validate 和删除能力必须有明确契约及独立测试后才能冻结。
 
-Core Containers 统一遵守以下规则：
+未跟踪实现中的任何 API 都仍可调整。完成条件包括：实现审阅、CMake source、`rbt_test`、CTest 注册、本地验证和三平台 CI。
 
-- 所有容器自身由调用方提供存储，使用 `init/deinit` 管理内部资源。
-- 容器内部堆内存统一使用 memory wrapper。
-- 返回 `enum aidb_status` 的函数必须能表达 `AIDB_OK`、`AIDB_ERROR_INVALID_ARGUMENT`、`AIDB_ERROR_OUT_OF_MEMORY` 等基础错误。
-- `deinit(NULL)` 和 `clear(NULL)` 是否安全由各模块文档明确，测试跟随文档。
-- 容器默认按值保存元素，不拥有元素内部指针。
-- 需要深拷贝或析构回调时，后续另行设计，不塞进第一版基础容器。
+## 6. map（planned）
 
-## 10. 测试计划
+map 计划建立在已验证的 rbt 之上，为业务模块提供 key-value 语义。设计必须先明确：
 
-每个容器都应有独立测试文件：
+- key/value 是按值复制、borrowed 还是由回调管理；
+- duplicate key 的替换规则；
+- compare callback 和字符串 key helper；
+- get 返回值的 borrowed/owned 语义；
+- clear/deinit 的析构责任。
 
-- `tests/core/vector_test.c`
-- `tests/core/string_utils_test.c`
-- `tests/core/list_test.c`
-- `tests/core/rbt_test.c`
-- `tests/core/map_test.c`
+在 rbt 未完成前，不冻结 map public API，也不创建占位实现。
 
-测试原则：
+## 7. byte_buffer（planned）
 
-- 不访问文件。
-- 不联网。
-- 不依赖真实 AI API。
-- 不测试实现内部节点布局。
-- 优先测试公开 API 的行为、边界和失败路径。
-- 所有测试进入默认 CTest，保持可重复、离线、无费用。
+byte_buffer 负责 data、capacity、position/limit 和 bounds error，并依赖已实现的 binary encoding。它不属于当前已完成容器；详细边界见 [Binary Encoding](16_binary_encoding_design.md)。
 
-## 11. 和后续模块的关系
+## 8. 测试与后续依赖
 
-Core Containers 会成为后续模块的共同基础：
+vector/list/string_utils 的测试均已接入当前三平台 workflow。rbt、map、byte_buffer 必须分别具备独立测试，不能仅由未来业务模块间接覆盖。
 
-- Parser 使用 vector 保存 token、表达式节点列表和解析结果集合。
-- Metadata 使用 map 保存表、字段、索引和约束信息。
-- Plan 使用 vector/list 组织计划节点和候选计划。
-- Record 使用 string_utils 处理字段名、文本值和序列化辅助字符串。
-- File Manager 使用 map 缓存文件句柄和页元数据。
-- AI Runtime 使用 vector/list 管理 prompt 片段、候选结果和推理上下文。
+后续依赖建议：
 
-后续 Page、File、Log、Record 不应各自手写动态数组、链表或映射。容器逻辑集中在 core 层，业务模块只表达自己的领域语义。
+- Parser/Plan 使用 vector 组织 token、表达式和节点列表。
+- queue/等待或稳定节点场景按需要使用 list。
+- Metadata/File Manager 在 map 完成后使用明确的 key-value 抽象。
+- Page/File/Log/Record 使用 byte_buffer 和 binary，不能各自散落编码逻辑。
+- AI Runtime 使用 containers 组织 prompt 片段、候选结果和调用上下文。

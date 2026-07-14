@@ -1,12 +1,12 @@
 # 错误处理
 
-错误处理必须让调用者知道失败原因。不要到处 `return -1` / `NULL` 后不说明原因。
+## Status
+
+`error` 和 `context` 已实现、具有独立测试、接入 CMake/CTest，并由当前 GitHub Actions workflow 在 Windows/MSVC、Ubuntu/GCC、macOS/AppleClang 上验证。
 
 ## 状态类型
 
-后续统一使用 `aidb_status` 或类似结果类型表达成功/失败。当前文档只冻结方向，具体类型在 `v0.1.2` 实现。
-
-常见错误类别包括：
+项目统一使用 `enum aidb_status`：
 
 - `AIDB_OK`
 - `AIDB_ERROR_INVALID_ARGUMENT`
@@ -16,21 +16,36 @@
 - `AIDB_ERROR_NOT_FOUND`
 - `AIDB_ERROR_INTERNAL`
 
-## 函数返回值规则
+`aidb_status_name` 和 `aidb_status_message` 提供稳定名称与可读说明；`aidb_status_is_ok`、`aidb_status_is_error` 用于状态判断。
 
-- 简单状态函数返回 `aidb_status`。
-- 输出对象通过 `out` 参数返回。
-- 返回指针时必须明确 `owned/borrowed/view`。
-- 入参非法时返回明确错误，不依赖崩溃暴露问题。
+## 返回规则
 
-## 错误信息
+- 一般状态函数返回 `enum aidb_status`。
+- 结果通过领域相关 out 参数返回；当前不规划独立的通用 `aidb_result` 模块。
+- required argument 为 `NULL` 时，status API 返回 `AIDB_ERROR_INVALID_ARGUMENT`。
+- pointer-returning lookup/allocation API 失败时返回 `NULL`。
+- 返回指针时必须明确 `owned`、`borrowed` 或 `view`。
+- 失败时不能泄漏资源，out 参数的失败后状态必须在接口文档中定义。
 
-- 后续可由 `aidb_context` 记录最近错误。
-- 不在底层库随意 `printf/fprintf`。
-- CLI 或 shell 层可以负责把错误转成人类可读输出。
+## Context
+
+`aidb_context` 保存最近一次 `aidb_status` 和固定容量的错误消息。当前接口使用 stack/embedded 生命周期：
+
+- `aidb_context_init` / `aidb_context_deinit`
+- `aidb_context_set_error` / `aidb_context_clear_error`
+- `aidb_context_last_status`
+- `aidb_context_error_message`
+
+底层库不随意 `printf/fprintf`；CLI 或更高层负责把状态和 context 信息转换为人类可读输出。
+
+## 清理 API
+
+- stack 或 embedded object 使用 `init/deinit`。
+- heap-owned object 只有在确有需要时使用 `create/destroy`。
+- cleanup API 是否接受 `NULL` 必须由对应模块记录并测试；已记录为安全的清理函数可以接受 `NULL`。
 
 ## 测试要求
 
-- 测试应覆盖错误路径。
-- 内存分配失败、非法参数、解析失败、文件不存在等路径都应逐步补齐。
-- 不允许只测试 happy path 后宣称模块完成。
+- `error_test` 覆盖状态名称、消息和状态判断。
+- `context_test` 覆盖初始化、设置、读取、清空和非法参数路径。
+- 后续模块必须覆盖 invalid argument、out of memory、not found 及其领域错误路径，不能只验证 happy path。
