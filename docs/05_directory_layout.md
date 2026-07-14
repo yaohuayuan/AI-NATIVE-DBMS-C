@@ -1,70 +1,69 @@
 # 目录职责
 
-本文说明项目目录边界。目录可以先存在并放置 README 或 `.gitkeep`，但不能为了“看起来完整”提前创建未来功能 `.c/.h` 实现文件。
+目录存在只表示工程为某类能力预留了位置，不代表模块已经 implemented。仓库允许少量带 README 的架构占位目录，但必须明确标记为 planned；不得为尚未确定的设计批量创建空 `.c/.h` 文件。
 
-## include
+## 当前目录边界
 
-- 只放公开头文件。
-- `include/` 下只有 `aidb/` 一个项目命名空间目录是正常的。
-- `include/README.md` 负责解释 include 目录职责。
-- 不在 `include/` 下创建 `core`、`dbms`、`ai`、`json` 等平级目录。
-- 未来如果公开头文件变多，只在 `include/aidb/` 下继续分 `core/dbms/ai/json` 子目录。
+### `include/aidb`
 
-## src/core
+- 项目 public API 的唯一命名空间目录。
+- 当前公开 error、context、memory、arena、binary、vector、list、string_utils 等已实现模块的接口。
+- 公开头文件不能依赖 `src` 下的 internal header。
+- 不稳定的 node、manager、provider 或平台结构不应直接暴露；复杂模块未来优先使用 opaque public type。
+- 当前未跟踪 `rbt.h` 仍是 in-progress 工作，不因位于此目录就视为稳定 public API。
 
-通用基础设施，包括后续的 `error/result/context/memory/arena/vector/string_utils`。业务模块不应反向污染 core。
+### `src/core`
 
-## src/platform
+- 通用核心实现，不依赖 DBMS 或 AI 业务。
+- 当前实现 error、context、memory、arena、binary、vector、list、string_utils。
+- 当前未跟踪 `rbt.c` 未接入 CMake，不属于已完成 core。
+- 项目当前不规划独立 generic result 模块；函数统一使用 `enum aidb_status` 和领域 out 参数。
 
-跨平台封装，包括后续的 `path/fs/time/thread/socket/env`。平台差异优先收敛在这里。
+### `src/platform`
 
-## src/json
+- internal 平台与编译器差异封装。
+- 当前包含 arena 使用的 alignment abstraction。
+- 未来只有出现真实跨平台需求时才增加 path、filesystem、time、thread、socket 等适配，不提前创建空实现。
 
-手搓 JSON 子集，包括后续的 `json_builder/json_parser/json_escape`。只实现项目实际需要的 JSON 能力。
+### `src/cli`
 
-## src/net
+- 当前只有 minimal CLI/bootstrap。
+- 负责组合、入口和人类可读输出，不承载 DBMS、AI runtime 或存储逻辑。
+- 当前不是 SQL CLI。
 
-HTTP/socket/TLS 适配。HTTP 可以手搓，TLS 先适配成熟库，不把密码学实现作为本项目目标。
+### `tests`
 
-## src/ai
+- 当前包含 core 基础模块测试，并由根 `CMakeLists.txt` 注册到 CTest。
+- 默认测试离线、可重复、无费用，不依赖 API Key。
+- 未来真实 API 或特殊环境测试放入明确的 manual 路径，不进入默认 CTest。
 
-AI Runtime，包括 `ai/core`、`ai/client`、`ai/runtime`、`ai/operators`。默认开发路径必须 mock-first。
+## Planned architecture directories
 
-## src/dbms
+以下目录当前主要是架构占位或设计方向，不代表实现：
 
-数据库内核，包括 `storage/log/buffer/tx/record/catalog/parser/planner/optimizer/executor/explain`。
+- `src/dbms`：planned storage、buffer、record、transaction、metadata、parser、planner、executor、optimizer、explain。
+- `src/ai`：designed/planned provider、runtime、operators。
+- `src/json`：planned 项目所需 JSON 子集。
+- `src/net`：planned 网络适配；真实网络不进入默认测试假设。
+- `src/shell`：planned REPL/command dispatch，与当前 minimal CLI 区分。
+- `examples`：planned 可运行示例；不得展示尚未实现的功能。
+- `benchmark`：planned 性能和研究实验入口。
+- `tools`：planned 辅助工具，不混入核心库。
+- `data`：本地运行数据位置；不提交运行产物。
 
-## src/shell
+占位 README 必须明确写出 planned/design 状态。目录一旦开始承载实现，应同步更新 [状态矩阵](README.md)、ROADMAP、CMake 和测试。
 
-REPL 和命令分发。命令入口保持薄，不堆数据库或 AI 业务逻辑。
+## Supporting directories
 
-## tests
+- `docs`：项目概览、工程规范、模块设计、状态入口和未来迁移/研究文档。
+- `scripts`：可重复的 build/test/run 辅助脚本；脚本不能隐藏失败。
+- `.github/workflows`：CI 配置，不作为模块已经通过 CI 的唯一证据；还需要成功运行记录。
+- `build`、`bin`：生成产物，不属于源码或文档事实来源，不应提交。
 
-- 镜像 `src`。
-- 默认测试不联网。
-- `tests/manual` 放真实 API 手动测试。
-- 每个模块至少有 basic test。
+## 创建规则
 
-## examples
-
-演示脚本和 `demo.sql`。示例应帮助理解当前已实现能力，不假装未来功能已经存在。
-
-## docs
-
-项目文档和规范，包括架构、构建、测试、命名、内存、错误处理、Git 和 AI 辅助开发规则。
-
-## scripts
-
-`build/test/run/run_demo` 等辅助脚本。脚本应减少重复命令，但不能隐藏失败。
-
-## benchmark
-
-后期实验评测。当前早期阶段只保留目录，不提前承诺指标。
-
-## tools
-
-后期辅助工具。工具代码不能混入核心库。
-
-## data
-
-本地运行数据。只提交 `.gitkeep`，不提交运行产物。
+- 允许少量用于说明目标分层的目录和 README 占位。
+- 占位目录必须清楚标记 planned，不得让读者误以为能力可用。
+- 不为尚未确定的模块批量创建头文件、实现文件、测试 target 或伪 API。
+- 模块开始实现时，public/internal/platform 边界必须先明确。
+- 模块状态以源码、CMake、CTest 和 CI 为准，而不是以目录名或文件名为准。
