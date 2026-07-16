@@ -1,0 +1,72 @@
+Read:
+
+- `AGENTS.md`
+- `docs/planning/00_master_spec.md`
+- all approved reports under `docs/planning/reports/01_*.md` through `08_*.md`
+- current `README.md`, `ROADMAP.md` and versioning document
+
+Execute only Phase P8: Final integrated roadmap.
+
+Do not modify ROADMAP or source code in this phase.
+
+Resolve contradictions among reports. If a report is unapproved or missing, stop and list the missing prerequisite instead of inventing it.
+
+Create a dependency-driven roadmap covering:
+
+- current Core work;
+- legacy migration;
+- DBMS baseline;
+- Explain/metrics;
+- AI Runtime and providers;
+- AI_MATCH;
+- cache/batching/budget;
+- AI-aware execution;
+- AIDB Terminal and Tool Runtime;
+- Skills and Agent loop;
+- local models;
+- MCP and GUI;
+- native C inference;
+- model structural research;
+- benchmark and research release.
+
+Provide three routes:
+
+A. fastest strong demonstration;
+B. balanced engineering route;
+C. long-term research route.
+
+For every milestone specify:
+
+- prerequisites;
+- deliverable;
+- Definition of Done;
+- tests;
+- demo;
+- work size;
+- risks;
+- migration source;
+- parallel opportunities;
+- explicit non-goals;
+- version suggestion.
+
+Identify:
+
+- critical path;
+- optional branches;
+- features that should become independent subprojects;
+- features that must not block the DBMS/AI operator line;
+- stop conditions preventing unlimited scope growth.
+
+Do not assign false precise calendar deadlines. Use relative effort and scenario estimates.
+
+Write:
+
+`docs/planning/reports/09_final_roadmap.md`
+
+End with:
+
+- recommended primary route;
+- next stage after the current Core work;
+- top-level deferred list;
+- human decisions needed before implementation backlog;
+- stop.

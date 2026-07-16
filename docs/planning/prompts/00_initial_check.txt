@@ -1,0 +1,25 @@
+Read:
+
+- `AGENTS.md`
+- `docs/planning/README.md`
+- `docs/planning/00_master_spec.md`
+- `docs/planning/01_task_index.md`
+- `docs/planning/02_execution_protocol.md`
+
+This is only an initialization check.
+
+Do not inspect both source repositories in depth.
+Do not run a full audit.
+Do not modify source code.
+Do not rewrite ROADMAP.
+Do not start P0 automatically.
+
+Confirm only:
+
+1. the planning files are readable;
+2. the directory layout is correct;
+3. you understand that the master specification is not one giant task;
+4. the next intended task is P0 using `docs/planning/prompts/01_repository_audit.txt`;
+5. any obvious missing or conflicting planning file.
+
+Then stop.

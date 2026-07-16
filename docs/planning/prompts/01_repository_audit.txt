@@ -1,0 +1,87 @@
+Read first:
+
+- `AGENTS.md`
+- `docs/planning/00_master_spec.md`
+- `docs/planning/01_task_index.md`
+- `docs/planning/02_execution_protocol.md`
+
+Execute only Phase P0: Repository and implementation audit.
+
+Repositories:
+
+- current: `D:\code\AI-NATIVE-DBMS-C`
+- legacy read-only reference: `D:\code\DBMS\NewDBMS\DBMS_C`
+
+This phase may read source, inspect Git state, configure/build in safe locations, run tests and run controlled demos.
+
+Do not:
+
+- modify source code;
+- delete or clean untracked files;
+- commit or push;
+- perform a broad paper survey;
+- design the final architecture;
+- produce the migration matrix;
+- redesign ROADMAP;
+- implement fixes.
+
+Audit requirements:
+
+1. Record toolchain, Git state and untracked/modified files.
+2. Build and test the current repository using its documented workflow.
+3. Determine which modules are truly implemented, tested and in active call paths.
+4. Inspect unfinished or unregistered work such as current container modules without modifying it.
+5. Keep the legacy source tree read-only. Use isolated build/runtime directories when possible.
+6. Build and run registered legacy tests and identify unregistered test sources.
+7. Run the legacy CLI/demo when safe.
+8. Audit by module:
+   - core utilities and containers;
+   - storage;
+   - buffer;
+   - log/transaction/recovery;
+   - concurrency;
+   - records/schema/layout;
+   - parser/query/plan/scan/executor;
+   - metadata/statistics/index;
+   - CLI/trace/explain;
+   - tests and cross-platform assumptions.
+9. Distinguish:
+   - build success;
+   - formal test registration;
+   - actual assertions;
+   - semantic coverage;
+   - incomplete functions;
+   - strict-warning issues;
+   - documentation claims.
+10. Record documentation/code conflicts and risks.
+11. Include paths and representative types/functions as evidence.
+12. Use the evidence labels from `AGENTS.md`.
+
+Write the complete report to:
+
+`docs/planning/reports/01_repository_audit.md`
+
+Required report sections:
+
+- Executive Summary
+- Scope and Method
+- Environment and Git State
+- Current Repository Build/Test Evidence
+- Current Repository Module Matrix
+- Legacy Repository Build/Test Evidence
+- Legacy Repository Module Matrix
+- Actual End-to-End Call Paths
+- Test-Coverage Boundaries
+- Documentation/Code Conflicts
+- Defects and Risks Found Without Modification
+- Unknowns
+- Inputs Required by P1 and P2
+
+At the end:
+
+- summarize what was verified;
+- list what remains unknown;
+- state that P1 and P2 are the possible next phases;
+- stop.
+
+Do not start P1 or P2.

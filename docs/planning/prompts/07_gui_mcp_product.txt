@@ -1,0 +1,82 @@
+Read:
+
+- `AGENTS.md`
+- `docs/planning/00_master_spec.md`
+- `docs/planning/reports/04_target_architecture.md`
+- `docs/planning/reports/05_terminal_tool_skill_agent.md`
+- `docs/planning/reports/06_local_models_native_inference.md`
+
+Execute only Phase P6: GUI, MCP and product-layer architecture.
+
+Do not implement code.
+Do not make the DBMS kernel depend on a GUI framework.
+Do not redesign completed core architecture.
+
+Design clients over stable APIs:
+
+```text
+CLI / AIDB Terminal / GUI / MCP / local API
+                  -> Tool Runtime and stable engine APIs
+                      -> DBMS / AI systems
+```
+
+Compare:
+
+- pure native C GUI;
+- GTK4;
+- libui-ng;
+- Nuklear/ImGui-style UI;
+- Qt where relevant;
+- local Web GUI;
+- desktop WebView wrappers;
+- TypeScript frontend;
+- IPC versus local HTTP versus direct C API.
+
+Evaluate:
+
+- Windows/Linux/macOS;
+- packaging;
+- debugging;
+- SQL editor and result grid;
+- plan-tree visualization;
+- real-time metrics;
+- AI trace;
+- Agent steps and confirmations;
+- local model management;
+- benchmark charts;
+- testability;
+- kernel isolation.
+
+Design GUI workspaces:
+
+- database/schema/SQL/results;
+- Explain and operator tree;
+- AI runtime/provider/model;
+- Agent/Skill trace;
+- terminal;
+- experiment/benchmark;
+- settings/security.
+
+Design MCP as an adapter over Tool Runtime:
+
+- tools;
+- resources;
+- prompts where useful;
+- transport;
+- schema/error mapping;
+- authentication/permissions;
+- read/write safety.
+
+Define when TUI, MCP and GUI should begin relative to DBMS/AI milestones.
+
+Write:
+
+`docs/planning/reports/07_gui_mcp_product.md`
+
+End with:
+
+- recommended GUI technology path;
+- recommended MCP boundary;
+- staged product milestones;
+- non-goals;
+- stop.

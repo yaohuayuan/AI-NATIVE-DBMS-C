@@ -1,0 +1,74 @@
+Read:
+
+- `AGENTS.md`
+- `docs/planning/00_master_spec.md`
+- `docs/planning/01_task_index.md`
+- `docs/planning/reports/01_repository_audit.md`
+- existing `docs/research/*`
+
+Execute only Phase P2: Related work and research landscape.
+
+Use current online research where available.
+
+Prefer:
+
+- original papers;
+- official author pages;
+- official repositories;
+- formal documentation.
+
+Do not modify source code or ROADMAP.
+
+Research the most relevant verified work in:
+
+- declarative semantic operators;
+- AI/LLM-native query processing;
+- semantic filter/join/map/aggregate;
+- cost/latency/quality optimization;
+- agentic query rewriting;
+- adaptive execution;
+- model routing and cascade;
+- semantic-query benchmarks;
+- local-model database execution;
+- AI-native DBMS architecture.
+
+Start with the identities named in the master specification, but verify titles, dates and availability instead of assuming every name or future arXiv identifier is valid.
+
+For each verified system or paper record:
+
+- citation and source;
+- problem;
+- abstraction;
+- supported operators;
+- planner/executor integration;
+- cost model;
+- quality model;
+- caching/batching;
+- adaptive behavior;
+- Agent use;
+- released code status;
+- reusable idea for aidb;
+- unsuitable idea for aidb;
+- recommended project phase.
+
+Separate:
+
+- capabilities demonstrated in a paper;
+- capabilities present in released code;
+- your proposed adaptation.
+
+Answer:
+
+1. What makes aidb meaningfully AI-native rather than NL2SQL?
+2. Which first operator has the best research/implementation ratio?
+3. Which optimizer rule should come first?
+4. Which benchmark gaps can aidb realistically address?
+5. Which ideas belong only to a future graduate/doctoral line?
+
+Write:
+
+`docs/planning/reports/03_related_work.md`
+
+Include a prioritized “adopt / adapt / defer / reject” table.
+
+Then stop.

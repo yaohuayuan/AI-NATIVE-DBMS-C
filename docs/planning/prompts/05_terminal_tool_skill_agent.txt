@@ -1,0 +1,71 @@
+Read:
+
+- `AGENTS.md`
+- `docs/planning/00_master_spec.md`
+- `docs/planning/reports/01_repository_audit.md`
+- `docs/planning/reports/04_target_architecture.md`
+
+Execute only Phase P4: Terminal, Tool, Skill, Agent and Event architecture.
+
+This is a design/report phase only.
+
+Do not implement code.
+Do not redesign the DBMS storage/query system.
+Do not design the native inference engine in detail.
+Do not begin GUI implementation.
+
+Design a minimal but extensible AIDB command system where:
+
+```text
+DBMS <-> Tool / Skill / Event Runtime <-> AI
+                       ^
+                  AIDB Terminal
+```
+
+Distinguish clearly:
+
+- terminal UI/REPL;
+- command parser;
+- file runtime;
+- process runtime;
+- DBMS tool adapters;
+- Tool Registry and invocation;
+- Skill workflow;
+- Agent loop;
+- Event Bus;
+- permissions/audit;
+- future MCP/GUI adapters.
+
+Cover:
+
+1. SQL, command, AI, Skill and trace modes.
+2. Minimal file commands and structured file tools.
+3. Cross-platform process spawning without relying primarily on `system()`.
+4. stdout/stderr/exit code/timeout/cancellation.
+5. Tool definition and result schemas.
+6. DBMS tools, AI tools, filesystem tools and process tools.
+7. Skill packaging: built-in C first, file-defined Skills later.
+8. Agent loop, budgets, maximum steps, confirmation and replay.
+9. DBMS-to-AI events and AI-to-DBMS tool calls.
+10. Permission levels and workspace sandbox.
+11. Safe treatment of deletion, writes, external processes and database updates.
+12. How CLI, MCP, GUI and HTTP/IPC reuse the same Tool Runtime.
+13. Cross-platform platform-layer requirements.
+14. Testing strategy with deterministic fake tools and mock models.
+15. Staged implementation from tiny REPL to shared runtime.
+
+Do not attempt to clone every Bash or PowerShell feature.
+
+Give first-version and deferred command lists.
+
+Write:
+
+`docs/planning/reports/05_terminal_tool_skill_agent.md`
+
+End with:
+
+- recommended minimal v1 terminal scope;
+- ordered implementation milestones;
+- security non-negotiables;
+- explicit non-goals;
+- stop.

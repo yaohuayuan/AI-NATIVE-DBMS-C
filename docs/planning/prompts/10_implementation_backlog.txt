@@ -1,0 +1,56 @@
+Read:
+
+- `AGENTS.md`
+- `docs/planning/reports/01_repository_audit.md`
+- `docs/planning/reports/02_migration_matrix.md`
+- `docs/planning/reports/04_target_architecture.md`
+- `docs/planning/reports/09_final_roadmap.md`
+- current repository status and versioning rules
+
+Execute only Phase P9: Implementation backlog and first batches.
+
+Do not implement code.
+Do not commit or rewrite ROADMAP.
+
+Convert the approved roadmap into small implementation batches.
+
+A batch must normally be completable in one focused Codex implementation conversation and must not mix unrelated layers.
+
+For each batch specify:
+
+- batch ID and title;
+- goal;
+- exact scope;
+- allowed/expected files;
+- legacy source references;
+- API/ownership/error decisions required first;
+- implementation steps;
+- tests to add;
+- build/CTest/CI checks;
+- Definition of Done;
+- non-goals;
+- rollback/abort condition;
+- dependencies;
+- work size;
+- recommended review points.
+
+Prioritize the current critical path.
+
+Generate at least:
+
+- next 10 concrete batches;
+- following 10 higher-level queued batches;
+- deferred research backlog grouped separately.
+
+Ensure current unfinished Core work is handled before pretending DBMS or AI stages are implemented.
+
+Write:
+
+`docs/planning/reports/10_implementation_backlog.md`
+
+End with:
+
+- exactly one recommended next implementation batch;
+- the batch ID;
+- why it is next;
+- stop.

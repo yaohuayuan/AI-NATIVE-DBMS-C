@@ -1,0 +1,86 @@
+Read:
+
+- `AGENTS.md`
+- `docs/planning/00_master_spec.md`
+- `docs/planning/01_task_index.md`
+- `docs/planning/reports/01_repository_audit.md`
+- existing `docs/migration/*`
+
+Execute only Phase P1: Legacy-to-aidb migration matrix.
+
+Do not:
+
+- repeat the entire repository audit;
+- modify or copy source code;
+- implement migration;
+- redesign the AI system;
+- conduct a broad paper survey;
+- rewrite ROADMAP.
+
+Use targeted source inspection only where the audit report lacks enough evidence.
+
+For every meaningful legacy module, classify it as exactly one of:
+
+- `REUSE_DIRECTLY`
+- `PORT_WITH_REFACTOR`
+- `REFERENCE_ONLY`
+- `REWRITE`
+- `DROP_OR_DEFER`
+
+At minimum cover:
+
+- strings/containers/binary/JSON utilities;
+- BlockId/Page/FileManager;
+- Schema/Layout/RID/RecordPage/TableScan;
+- Buffer/BufferManager/LRU;
+- LogManager/LogRecord/WAL;
+- Transaction/BufferList;
+- Recovery;
+- LockTable/Concurrency/DeadlockDetector;
+- tokenizer/lexer/parser;
+- constants/expressions/terms/predicates;
+- scans;
+- plans/planners/executor/update planner;
+- table/view/index/statistics metadata;
+- hash index;
+- DBMS facade/CLI/trace;
+- test suites and fixtures.
+
+For each row include:
+
+- legacy files and representative symbols;
+- target module;
+- classification;
+- evidence level;
+- reusable concepts/algorithm;
+- incompatible assumptions;
+- ownership/error/platform changes;
+- disk-format impact;
+- test migration;
+- prerequisites;
+- work size XS/S/M/L/XL;
+- risks;
+- recommended order.
+
+Explicitly decide:
+
+- full rewrite vs whole migration vs hybrid migration;
+- whether disk-format compatibility is valuable;
+- which modules can most reduce schedule;
+- which modules should only be references;
+- whether a temporary compatibility adapter is justified;
+- how to avoid importing legacy technical debt.
+
+Write:
+
+`docs/planning/reports/02_migration_matrix.md`
+
+End with:
+
+- recommended migration strategy;
+- strict dependency order;
+- first five candidate migration batches;
+- unresolved human decisions;
+- stop.
+
+Do not begin migration implementation.

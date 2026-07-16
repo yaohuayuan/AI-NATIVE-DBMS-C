@@ -1,0 +1,74 @@
+Read:
+
+- `AGENTS.md`
+- `docs/planning/00_master_spec.md`
+- `docs/planning/reports/03_related_work.md`
+- `docs/planning/reports/04_target_architecture.md`
+- `docs/planning/reports/06_local_models_native_inference.md`
+- existing `docs/research/*`
+
+Execute only Phase P7: Benchmark, datasets and experiment system.
+
+Do not implement benchmark code.
+Do not modify ROADMAP or source.
+
+Design a benchmark that a single developer can eventually reproduce.
+
+Cover:
+
+1. Research questions.
+2. Relational-only baseline.
+3. Naive row-by-row AI baseline.
+4. Predicate-reordering baseline.
+5. Cache/no-cache.
+6. Batch/no-batch.
+7. model size/provider comparisons.
+8. local/cloud/native inference comparisons.
+9. Raspberry Pi edge-provider experiment.
+10. timeout/malformed/error cases.
+11. structured and text datasets.
+12. repeated-input and selectivity controls.
+13. operator placement.
+14. quality ground truth.
+15. reproducibility and reporting.
+
+Metrics:
+
+- end-to-end latency;
+- throughput;
+- calls;
+- token/usage;
+- estimated cost;
+- cache hit rate;
+- batch efficiency;
+- accuracy/precision/recall/F1;
+- structured-output validity;
+- SQL parse/execution correctness;
+- failure/timeout rate;
+- memory/CPU/GPU;
+- buffer and DBMS metrics.
+
+Define:
+
+- dataset ownership/licensing;
+- synthetic-data generation;
+- train/validation/test separation for future model work;
+- fixed seeds/configurations;
+- raw output format;
+- experiment manifest;
+- result tables and plots;
+- acceptance thresholds;
+- hardware reporting.
+
+Prioritize experiments into:
+
+- required for first AI_MATCH release;
+- required for AI-aware execution;
+- required for native inference;
+- long-term model-structure research.
+
+Write:
+
+`docs/planning/reports/08_benchmark_research.md`
+
+End with a smallest viable benchmark suite and stop.

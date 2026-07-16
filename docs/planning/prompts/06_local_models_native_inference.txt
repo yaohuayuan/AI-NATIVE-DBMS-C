@@ -1,0 +1,95 @@
+Read:
+
+- `AGENTS.md`
+- `docs/planning/00_master_spec.md`
+- `docs/planning/reports/01_repository_audit.md`
+- `docs/planning/reports/03_related_work.md`
+- `docs/planning/reports/04_target_architecture.md`
+
+Execute only Phase P5: Local providers, native C inference and model-structure route.
+
+This is a research and architecture report.
+
+Do not copy llama.cpp source into the repository.
+Do not implement the inference engine.
+Do not fine-tune a model.
+Do not modify source code or ROADMAP.
+
+Treat these as three distinct levels:
+
+A. Early provider integration:
+- Ollama;
+- llama.cpp server;
+- OpenAI-compatible local service;
+- Qwen/GLM and other suitable local text models;
+- cloud provider;
+- Raspberry Pi remote provider.
+
+B. Long-term native C inference:
+- learn from llama.cpp/ggml/GGUF;
+- build a smaller C17 runtime owned by aidb;
+- initially support one architecture and CPU batch=1;
+- validate numerically against reference implementations.
+
+C. Later model research:
+- adapters/fine-tuning;
+- database-aware input/output heads;
+- deeper model structural modifications;
+- distillation;
+- foundation-model training only as an explicitly unrealistic near-term endpoint.
+
+Required sections:
+
+1. Provider abstraction and capability matrix.
+2. Ollama versus llama.cpp server versus direct native provider.
+3. Qwen/GLM candidate task/model matrix.
+4. Minimum-model experiments for AI_MATCH, classification, extraction, NL2SQL, repair, Explain and tool selection.
+5. PC CPU/GPU and Raspberry Pi roles.
+6. Native inference module architecture:
+   - tensor/dtype/ownership;
+   - operators;
+   - GGUF;
+   - tokenizer;
+   - model loader;
+   - Transformer;
+   - RoPE/attention/MLP;
+   - logits and generation;
+   - KV cache;
+   - sampling;
+   - quantization;
+   - threading/SIMD;
+   - future GPU backends.
+7. First supported model-architecture recommendation.
+8. llama.cpp license/attribution and clean-design considerations.
+9. Reference-validation methodology:
+   - tokenizer IDs;
+   - intermediate tensors;
+   - logits;
+   - generated tokens;
+   - numerical tolerance;
+   - memory/performance.
+10. Database-aware model structural ideas:
+    - schema/AST/plan encoders;
+    - typed outputs/tool tokens;
+    - confidence/cost/quality heads;
+    - DBMS-guided decoding;
+    - cache/runtime coordination.
+11. Clear separation among:
+    - running an existing model;
+    - implementing inference;
+    - fine-tuning;
+    - modifying architecture;
+    - training from scratch.
+12. Staged work and stop conditions.
+
+Write:
+
+`docs/planning/reports/06_local_models_native_inference.md`
+
+End with:
+
+- near-term provider recommendation;
+- first educational native-inference milestone;
+- long-term model-structure research map;
+- tasks that must be deferred;
+- stop.

@@ -1,0 +1,61 @@
+Replace every `<...>` placeholder before sending this prompt.
+
+Read:
+
+- `AGENTS.md`
+- `docs/planning/reports/09_final_roadmap.md`
+- `docs/planning/reports/10_implementation_backlog.md`
+- relevant architecture/design documents
+
+Execute only implementation batch:
+
+`<BATCH_ID> — <BATCH_TITLE>`
+
+Allowed changes:
+
+- `<LIST ALLOWED FILES OR DIRECTORIES>`
+
+Legacy reference:
+
+- `<LEGACY FILES OR NONE>`
+
+Required behavior:
+
+- `<PASTE THE BATCH GOAL AND ACCEPTANCE CRITERIA>`
+
+Required tests:
+
+- `<PASTE TEST REQUIREMENTS>`
+
+Required validation:
+
+```powershell
+<PASTE CONFIGURE COMMAND>
+<PASTE BUILD COMMAND>
+<PASTE TEST COMMAND>
+```
+
+Rules:
+
+- Do not implement later batches.
+- Do not broaden the public API without explaining why.
+- Follow ownership, error, naming and public/internal rules.
+- Do not remove user untracked files.
+- Do not modify the legacy repository.
+- Do not commit or push unless explicitly authorized below.
+- Keep documentation consistent with actual implementation status.
+- Do not mark a module complete merely because headers or placeholders exist.
+
+Commit permission:
+
+`<NO COMMIT / COMMIT ALLOWED WITH MESSAGE RULE>`
+
+At completion report:
+
+1. files changed;
+2. API/ownership/error decisions;
+3. tests added;
+4. commands run and results;
+5. remaining limitations;
+6. whether every Definition of Done item is satisfied;
+7. the next batch name, without starting it.

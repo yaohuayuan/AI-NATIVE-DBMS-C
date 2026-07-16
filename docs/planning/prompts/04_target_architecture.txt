@@ -1,0 +1,72 @@
+Read:
+
+- `AGENTS.md`
+- `docs/planning/00_master_spec.md`
+- `docs/planning/reports/01_repository_audit.md`
+- `docs/planning/reports/02_migration_matrix.md`
+- `docs/planning/reports/03_related_work.md`
+- current architecture, ownership, error and directory-layout documents
+
+Execute only Phase P3: Integrated target architecture.
+
+Do not modify source code or ROADMAP.
+
+Design an architecture grounded in verified repository facts and approved migration/research reports.
+
+Required boundaries:
+
+- platform;
+- core;
+- storage;
+- buffer;
+- transaction/recovery/concurrency;
+- query/catalog/explain;
+- AI Runtime;
+- AI operators;
+- Tool Runtime;
+- future terminal/Agent/MCP/GUI clients;
+- future native inference provider.
+
+For each boundary define:
+
+- responsibilities;
+- non-responsibilities;
+- dependency direction;
+- public API style;
+- opaque/internal types;
+- ownership and lifetimes;
+- error propagation;
+- cancellation;
+- metrics/trace;
+- test boundary;
+- platform behavior;
+- security concerns.
+
+Provide:
+
+- current architecture diagram;
+- target DBMS diagram;
+- target AI-native diagram;
+- dependency graph;
+- initialization and shutdown order;
+- one relational-query execution sequence;
+- one AI_MATCH execution sequence;
+- one model-provider failure sequence;
+- migration integration points;
+- module/library layout options;
+- decisions that must remain deferred.
+
+Explicitly prevent:
+
+- AI Runtime reading Page internals;
+- AI bypassing parser/planner/executor;
+- GUI depending on private kernel structures;
+- provider SDK details leaking into operators;
+- Terminal becoming the only API;
+- native inference blocking early provider integration.
+
+Write:
+
+`docs/planning/reports/04_target_architecture.md`
+
+End with a list of architecture decisions requiring human approval, then stop.
