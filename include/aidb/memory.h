@@ -1,7 +1,7 @@
+#ifndef AIDB_MEMORY_H
 #define AIDB_MEMORY_H
-#ifdef AIDB_MEMORY_H
 
-#include "stddef.h"
+#include <stddef.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -15,8 +15,8 @@ void *aidb_realloc(void *ptr, size_t size);
 
 void aidb_free(void *ptr);
 
-
 #ifdef __cplusplus
 }
 #endif
+
 #endif

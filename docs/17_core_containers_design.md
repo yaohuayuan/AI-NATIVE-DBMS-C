@@ -7,7 +7,7 @@
 | vector | implemented、tested、registered in CMake/CTest、cross-platform verified |
 | list | implemented、tested、registered in CMake/CTest、cross-platform verified |
 | string_utils | implemented、tested、registered in CMake/CTest、cross-platform verified |
-| rbt | implemented、registered in CMake/CTest、locally tested；cross-platform verification pending |
+| rbt | implemented、tested、registered in CMake/CTest、cross-platform verified |
 | map | planned |
 | byte_buffer | planned |
 
@@ -101,7 +101,7 @@ struct aidb_list {
 
 ## 5. rbt（implemented and locally tested）
 
-当前工作树中的 `rbt.h` 和 `rbt.c` 已进入 `aidb_core`。`rbt_test` 与 `rbt_oom_test` 已注册到默认 CTest，并通过本地 MinGW Debug 验证；当前改动尚无远端 Windows/MSVC、Ubuntu/GCC、macOS/AppleClang 运行证据，因此不能标记为 cross-platform verified。
+`rbt.h` 和 `rbt.c` 已进入 `aidb_core`。`rbt_test` 与 `rbt_oom_test` 已注册到默认 CTest，并通过本地 MinGW Debug 及 Windows/MSVC、Ubuntu/GCC、macOS/AppleClang 验证。
 
 当前契约是：
 
@@ -113,7 +113,7 @@ struct aidb_list {
 - pointer-returning find 在未找到或失败时返回 `NULL`；
 - validate 检查根节点、sentinel、父子链接、排序、红色节点、black height 和 size 不变量；删除返回 borrowed payload。
 
-正式测试覆盖参数错误、空树、插入、查找、重复、不同删除形态、排序压力、固定种子的 10,000 次随机操作，以及初始化和插入的确定性 OOM 路径。剩余完成门槛是实现审阅和三平台 CI。
+正式测试覆盖参数错误、空树、插入、查找、重复、不同删除形态、排序压力、固定种子的 10,000 次随机操作，以及初始化和插入的确定性 OOM 路径。
 
 ## 6. map（planned）
 
@@ -125,7 +125,7 @@ map 计划建立在已验证的 rbt 之上，为业务模块提供 key-value 语
 - get 返回值的 borrowed/owned 语义；
 - clear/deinit 的析构责任。
 
-在 rbt 审阅和三平台 CI 完成前，不冻结 map public API，也不创建占位实现。
+rbt 已满足 map 的前置实现与验证要求；map public API 仍须在独立 B005 批次中明确契约后实现。
 
 ## 7. byte_buffer（planned）
 
@@ -133,7 +133,7 @@ byte_buffer 负责 data、capacity、position/limit 和 bounds error，并依赖
 
 ## 8. 测试与后续依赖
 
-vector/list/string_utils 的测试均已接入当前三平台 workflow。rbt 的两个独立测试已接入 workflow，但当前改动的远端运行结果仍待验证。map、byte_buffer 也必须分别具备独立测试，不能仅由未来业务模块间接覆盖。
+vector/list/string_utils/rbt 的测试均已接入当前三平台 workflow。每个 public header 也由独立翻译单元执行重复 include 测试；该项当前已在本地通过，三平台 CI 尚待当前改动推送后验证。map、byte_buffer 也必须分别具备独立测试，不能仅由未来业务模块间接覆盖。
 
 后续依赖建议：
 

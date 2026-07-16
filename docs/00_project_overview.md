@@ -11,7 +11,7 @@ AI-NATIVE-DBMS-C 是一个使用 C17 开发的 AI-native DBMS 研究原型，代
 
 ## 当前边界
 
-项目当前处于 Core Containers 阶段。`error`、`context`、`memory`、`arena`、platform alignment、`binary`、`vector`、`list`、`string_utils` 已实现并测试；`rbt` 已实现、接入 CMake/CTest 并通过本地测试，当前改动的三平台 CI 尚待验证；`map`、`byte_buffer` 和所有 DBMS/AI 能力尚未实现。
+项目当前处于 Core Containers 阶段。`error`、`context`、`memory`、`arena`、platform alignment、`binary`、`vector`、`list`、`string_utils`、`rbt` 已实现、测试并完成三平台验证；public header hygiene 已在本地通过，当前改动的三平台 CI 尚待验证；`map`、`byte_buffer` 和所有 DBMS/AI 能力尚未实现。
 
 当前 executable 只是 minimal CLI/bootstrap，不是 SQL CLI。详细事实状态以 [文档索引与模块状态矩阵](README.md) 为准，推进顺序以 [ROADMAP](../ROADMAP.md) 为准。
 

@@ -292,4 +292,55 @@ if(AIDB_BUILD_TESTS)
         NAME rbt_oom_test
         COMMAND rbt_oom_test
     )
+
+    set(AIDB_PUBLIC_HEADERS
+        aidb/aidb.h
+        aidb/arena.h
+        aidb/binary.h
+        aidb/context.h
+        aidb/error.h
+        aidb/list.h
+        aidb/memory.h
+        aidb/rbt.h
+        aidb/string_utils.h
+        aidb/vector.h
+    )
+
+    foreach(AIDB_PUBLIC_HEADER IN LISTS AIDB_PUBLIC_HEADERS)
+        get_filename_component(
+            AIDB_PUBLIC_HEADER_NAME
+            ${AIDB_PUBLIC_HEADER}
+            NAME_WE
+        )
+        set(
+            AIDB_PUBLIC_HEADER_TEST_TARGET
+            public_header_${AIDB_PUBLIC_HEADER_NAME}_test
+        )
+        set(
+            AIDB_PUBLIC_HEADER_TEST_SOURCE
+            ${CMAKE_CURRENT_BINARY_DIR}/${AIDB_PUBLIC_HEADER_TEST_TARGET}.c
+        )
+
+        file(GENERATE
+            OUTPUT ${AIDB_PUBLIC_HEADER_TEST_SOURCE}
+            CONTENT
+                "#include <${AIDB_PUBLIC_HEADER}>\n#include <${AIDB_PUBLIC_HEADER}>\n\nint main(void)\n{\n    return 0;\n}\n"
+        )
+
+        add_executable(
+            ${AIDB_PUBLIC_HEADER_TEST_TARGET}
+            ${AIDB_PUBLIC_HEADER_TEST_SOURCE}
+        )
+
+        target_include_directories(
+            ${AIDB_PUBLIC_HEADER_TEST_TARGET}
+            PRIVATE
+                ${CMAKE_SOURCE_DIR}/include
+        )
+
+        add_test(
+            NAME ${AIDB_PUBLIC_HEADER_TEST_TARGET}
+            COMMAND ${AIDB_PUBLIC_HEADER_TEST_TARGET}
+        )
+    endforeach()
 endif()

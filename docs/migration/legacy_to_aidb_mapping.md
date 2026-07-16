@@ -5,7 +5,7 @@
 本表描述“旧能力在新项目中的目标去向”，不是文件复制清单。新项目当前事实为：
 
 - `vector`、`list`、`string_utils`、`binary` 已 implemented、tested，并由当前 GitHub Actions 在 Windows/MSVC、Ubuntu/GCC、macOS/AppleClang 验证。
-- `rbt` 已进入 `aidb_core` 并注册正式 CTest；本地确定性、随机序列和 OOM 测试通过，当前改动的三平台 CI 尚待验证。
+- `rbt` 已进入 `aidb_core` 并注册正式 CTest；确定性、随机序列和 OOM 测试已完成本地及三平台验证。
 - `map`、`byte_buffer` 为 `planned`。
 - 存储、事务、查询、索引、catalog 和其他 DBMS 模块均为 `planned`。
 - CLI 只有 minimal bootstrap；旧项目的 SQL CLI 不属于新项目当前能力。
@@ -19,7 +19,7 @@
 | `CVector` | `aidb_vector` | **已完成**：implemented/tested/三平台验证 | 连续存储、容量增长、按值元素 | 已采用 C17、`aidb_`、`aidb_status`、统一 allocator；不复制旧 PascalCase API | 旧 copy/free 回调与新按值复制语义不同，元素内部指针不深拷贝 | 旧 `LibBasicTest` 的增长/插入/删除场景，加新项目边界与分配失败测试 |
 | `CList` | `aidb_list` | **已完成**：implemented/tested/三平台验证 | 双向/链式遍历、插入删除行为 | 已统一新命名和生命周期；容器按值复制元素，不继承旧裸 `void *` 所有权约定 | 旧 shallow/deep clone 与 callback 行为不可机械映射 | 旧 `CListTest` 行为用例，加空表、迭代失效和失败原子性测试 |
 | `CString` | `string_utils`；必要时 future string abstraction | `string_utils` **已完成**；owning string abstraction **planned/未决定** | 长度受控字符串操作和复制场景 | 当前优先使用无所有权工具函数；只有真实需求出现后才设计 owning string | 直接迁移会引入另一套 heap string 和模糊所有权 | 旧 `CStringTest` 的比较/拼接/子串用例；新 API 需补 NULL、容量和别名测试 |
-| `CMap` / `RBT` | `aidb_rbt` + `aidb_map` | `rbt` **implemented/locally tested，三平台 CI 待验证**；`map` **planned** | 有序树、比较回调、map 建于树之上 | rbt 使用 borrowed payload、allocator wrapper、status/out 和显式不变量验证；map 仍须另行定义 key/value 契约 | 旧 tree nil-node、key/value 深拷贝和 iterator 生命周期与新设计冲突 | rbt 已覆盖插入/查找/删除、不变量、固定种子随机序列和 OOM；map 必须另建独立测试 |
+| `CMap` / `RBT` | `aidb_rbt` + `aidb_map` | `rbt` **tested/cross-platform verified**；`map` **planned** | 有序树、比较回调、map 建于树之上 | rbt 使用 borrowed payload、allocator wrapper、status/out 和显式不变量验证；map 仍须另行定义 key/value 契约 | 旧 tree nil-node、key/value 深拷贝和 iterator 生命周期与新设计冲突 | rbt 已覆盖插入/查找/删除、不变量、固定种子随机序列和 OOM；map 必须另建独立测试 |
 | `ByteBuffer` | `binary` + `byte_buffer` | `binary` **已完成**；`byte_buffer` **planned** | 区分编码规则与有状态读写位置 | 已把定长编码放入 `binary`；未来 buffer 必须明确 owned/view、position/limit 和失败后位置 | 把旧类整体复制会重新耦合编码、存储和分配 | 旧边界/读写序列作参考；使用 golden bytes、截断输入、端序和位置原子性测试 |
 
 ## 3. 存储与事务映射

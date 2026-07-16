@@ -77,7 +77,7 @@ arena 通过 internal `src/platform/align.h` 使用 `AIDB_PLATFORM_MAX_ALIGN`，
 
 ## 6. 测试
 
-`memory_test` 覆盖基础分配、calloc 清零、realloc 和 `free(NULL)`。`arena_test` 覆盖非法初始化、小对象、连续分配、大对象、对齐、reset、deinit 及 NULL/零长度路径。
+`memory_test` 覆盖基础分配、calloc 清零、realloc 和 `free(NULL)`。`arena_test` 覆盖非法初始化、小对象、连续分配、大对象、对齐、reset、deinit 及 NULL/零长度路径。public header 测试以独立翻译单元重复包含 `memory.h` 及其余公开头文件，防止 header guard 和自包含性回归。
 
 两个测试均注册到默认 CTest，并由当前 Windows/MSVC、Ubuntu/GCC、macOS/AppleClang workflow 验证。
 

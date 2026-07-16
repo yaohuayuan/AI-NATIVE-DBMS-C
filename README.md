@@ -10,7 +10,7 @@ AI-NATIVE-DBMS-C 是一个使用 C17 开发的 AI-native DBMS 研究原型。项
 
 - 已实现、测试并接入 CMake/CTest：`error`、`context`、`memory`、`arena`、platform alignment、`binary`、`vector`、`list`、`string_utils`。
 - 上述能力由当前 GitHub Actions workflow 在 Windows/MSVC、Ubuntu/GCC 和 macOS/AppleClang 上验证。
-- `rbt` 已在当前工作树实现并接入 CMake/CTest；本地 MinGW Debug 的确定性、随机序列和 OOM 测试通过，三平台 CI 尚待当前改动进入远端分支后验证。
+- `rbt` 已实现、接入 CMake/CTest，并由 Windows/MSVC、Ubuntu/GCC、macOS/AppleClang 验证；正式测试覆盖确定性、随机序列和 OOM 路径。
 - 当前可执行程序只是 minimal CLI/bootstrap，不是 SQL CLI。
 - `map`、`byte_buffer`、DBMS、AI runtime、实验和发布能力仍处于设计或规划阶段。
 
@@ -47,4 +47,4 @@ ctest --test-dir build/mingw-debug --output-on-failure
 
 ## 下一步
 
-当前先完成 `rbt` 的审阅和三平台 CI，再进入 `map`；`byte_buffer` 及后续 DBMS/AI 阶段按 [ROADMAP](ROADMAP.md) 推进。
+当前先完成 public header hygiene 的三平台 CI，再进入 `map`；`byte_buffer` 及后续 DBMS/AI 阶段按 [ROADMAP](ROADMAP.md) 推进。

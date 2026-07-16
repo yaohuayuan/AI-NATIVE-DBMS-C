@@ -22,7 +22,9 @@
 ### In progress
 
 - [x] `rbt`：实现、公开契约、CMake/CTest、本地确定性/随机序列/OOM 测试已完成。
-- [ ] `rbt`：当前改动的 Windows/MSVC、Ubuntu/GCC、macOS/AppleClang CI 验证。
+- [x] `rbt`：Windows/MSVC、Ubuntu/GCC、macOS/AppleClang CI 验证通过。
+- [x] public header hygiene：修复 `memory.h` guard，并在本地完成全部 public header 的独立/重复 include 测试。
+- [ ] public header hygiene：当前改动的三平台 CI 验证。
 
 ### Next
 

@@ -10,7 +10,7 @@
 - 当前公开 error、context、memory、arena、binary、vector、list、string_utils 等已实现模块的接口。
 - 公开头文件不能依赖 `src` 下的 internal header。
 - 不稳定的 node、manager、provider 或平台结构不应直接暴露；复杂模块未来优先使用 opaque public type。
-- `rbt.h` 已定义 caller-owned tree、borrowed payload、比较回调和 status/out 契约；当前工作树已完成本地测试，三平台 CI 尚待验证。
+- `rbt.h` 已定义 caller-owned tree、borrowed payload、比较回调和 status/out 契约，并完成本地及三平台 CI 验证。
 
 ### `src/core`
 

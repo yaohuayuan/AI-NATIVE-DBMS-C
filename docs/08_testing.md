@@ -17,8 +17,9 @@
 - `string_utils_test`
 - `rbt_test`
 - `rbt_oom_test`
+- `public_header_<name>_test`：为每个 `include/aidb/*.h` 生成独立且重复 include 的编译/运行测试
 
-当前 GitHub Actions workflow 在 Windows/MSVC、Ubuntu/GCC 和 macOS/AppleClang 上执行 configure、build 和上述 CTest。`rbt_test` 覆盖契约、插入/查找/重复、删除形态、排序压力和固定种子随机序列；`rbt_oom_test` 使用独立测试分配器确定性覆盖初始化与插入分配失败。它们已在本地 MinGW Debug 通过，当前改动的远端三平台结果仍为 `UNKNOWN`。
+当前 GitHub Actions workflow 在 Windows/MSVC、Ubuntu/GCC 和 macOS/AppleClang 上执行 configure、build 和上述 CTest。`rbt_test` 覆盖契约、插入/查找/重复、删除形态、排序压力和固定种子随机序列；`rbt_oom_test` 使用独立测试分配器确定性覆盖初始化与插入分配失败；两者已完成三平台验证。public header 测试已在本地 MinGW Debug 通过，当前改动的远端三平台结果仍为 `UNKNOWN`。
 
 ## 默认规则
 
