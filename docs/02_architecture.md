@@ -17,7 +17,7 @@ src/cli/main.c
 
 已实现模块具有 public header、source、CMake 接入和正式测试，并由当前 main 分支的 GitHub Actions 在 Windows/MSVC、Ubuntu/GCC、macOS/AppleClang 上验证。
 
-当前 executable 只是 minimal CLI/bootstrap，用于组合基础模块和验证最小启动路径；它不是 SQL CLI。`rbt` 是未跟踪的进行中实现，未进入 `aidb_core`，没有正式测试，不属于当前已实现架构。
+当前 executable 只是 minimal CLI/bootstrap，用于组合基础模块和验证最小启动路径；它不是 SQL CLI。`rbt` 已进入 `aidb_core` 并注册正式 CTest，本地验证通过；当前工作树的三平台 CI 结果仍为 `UNKNOWN`。
 
 ## 2. Target DBMS architecture
 

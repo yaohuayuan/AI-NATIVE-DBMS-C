@@ -10,13 +10,12 @@
 - 当前公开 error、context、memory、arena、binary、vector、list、string_utils 等已实现模块的接口。
 - 公开头文件不能依赖 `src` 下的 internal header。
 - 不稳定的 node、manager、provider 或平台结构不应直接暴露；复杂模块未来优先使用 opaque public type。
-- 当前未跟踪 `rbt.h` 仍是 in-progress 工作，不因位于此目录就视为稳定 public API。
+- `rbt.h` 已定义 caller-owned tree、borrowed payload、比较回调和 status/out 契约；当前工作树已完成本地测试，三平台 CI 尚待验证。
 
 ### `src/core`
 
 - 通用核心实现，不依赖 DBMS 或 AI 业务。
-- 当前实现 error、context、memory、arena、binary、vector、list、string_utils。
-- 当前未跟踪 `rbt.c` 未接入 CMake，不属于已完成 core。
+- 当前实现 error、context、memory、arena、binary、vector、list、string_utils 和 rbt；rbt 已接入 `aidb_core` 与 CTest，本地验证通过。
 - 项目当前不规划独立 generic result 模块；函数统一使用 `enum aidb_status` 和领域 out 参数。
 
 ### `src/platform`

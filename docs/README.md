@@ -27,7 +27,7 @@
 | vector | `vector.h`、`vector.c` | `vector_test` 已注册 | `tested`, `cross-platform verified` | [Core Containers](17_core_containers_design.md) |
 | list | `list.h`、`list.c` | `list_test` 已注册 | `tested`, `cross-platform verified` | [Core Containers](17_core_containers_design.md) |
 | string_utils | `string_utils.h`、`string_utils.c` | `string_utils_test` 已注册 | `tested`, `cross-platform verified` | [Core Containers](17_core_containers_design.md) |
-| rbt | 未跟踪 `rbt.h`、`rbt.c` | 未接入 CMake；无正式测试 | `in progress` | [Core Containers](17_core_containers_design.md) |
+| rbt | `rbt.h`、`rbt.c`，已进入 `aidb_core` | `rbt_test`、`rbt_oom_test` 已注册并在本地通过；当前改动三平台 CI 待验证 | `implemented`, `locally tested` | [Core Containers](17_core_containers_design.md) |
 | map | 无实现 | 无 | `planned` | [Core Containers](17_core_containers_design.md) |
 | byte_buffer | 无实现 | 无 | `planned` | [Binary Encoding](16_binary_encoding_design.md)、[Core Containers](17_core_containers_design.md) |
 | generic result module | 不计划建立独立模块 | 不适用 | `superseded` | 使用 `aidb_status` 与领域 out 参数 |

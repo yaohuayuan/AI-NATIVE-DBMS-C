@@ -51,6 +51,7 @@ add_library(aidb_core STATIC
     src/core/vector.c
     src/core/list.c
     src/core/string_utils.c
+    src/core/rbt.c
 )
 
 target_include_directories(aidb_core
@@ -255,5 +256,40 @@ if(AIDB_BUILD_TESTS)
     add_test(
         NAME string_utils_test
         COMMAND string_utils_test
+    )
+
+    add_executable(rbt_test
+        tests/core/rbt_test.c
+    )
+
+    target_include_directories(rbt_test
+        PRIVATE
+            ${CMAKE_SOURCE_DIR}/tests
+    )
+
+    target_link_libraries(rbt_test
+        PRIVATE
+            aidb_core
+    )
+
+    add_test(
+        NAME rbt_test
+        COMMAND rbt_test
+    )
+
+    add_executable(rbt_oom_test
+        tests/core/rbt_oom_test.c
+        src/core/rbt.c
+    )
+
+    target_include_directories(rbt_oom_test
+        PRIVATE
+            ${CMAKE_SOURCE_DIR}/include
+            ${CMAKE_SOURCE_DIR}/tests
+    )
+
+    add_test(
+        NAME rbt_oom_test
+        COMMAND rbt_oom_test
     )
 endif()

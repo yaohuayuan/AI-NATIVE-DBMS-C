@@ -2,7 +2,7 @@
 
 ## Status
 
-**Designed / planned，尚未形成可运行的研究原型。** 当前已实现、测试并完成三平台验证的是 error、context、memory、arena、platform alignment、binary、vector、list 和 string_utils；rbt 为 in progress；map、byte_buffer、DBMS 主链、AI runtime、AI operator、实验 runner 和研究发布均尚未完成。
+**Designed / planned，尚未形成可运行的研究原型。** 当前已实现、测试并完成三平台验证的是 error、context、memory、arena、platform alignment、binary、vector、list 和 string_utils；rbt 已实现并通过本地正式测试，但当前改动的三平台 CI 尚待验证；map、byte_buffer、DBMS 主链、AI runtime、AI operator、实验 runner 和研究发布均尚未完成。
 
 本文定义最终研究原型的目标边界和完成标准，不表示所列能力已经实现。状态词统一解释为：
 
@@ -153,7 +153,7 @@ WHERE category = 'support'
 
 ```text
 implemented core foundation and containers
-  -> complete rbt / map / byte_buffer
+  -> finish rbt review/CI, then map / byte_buffer
   -> storage + record baseline
   -> buffer + transaction + WAL + recovery
   -> parser + plan + executor + minimal DML

@@ -21,11 +21,11 @@
 
 ### In progress
 
-- [ ] `rbt`：存在未跟踪实现；尚未接入 CMake，尚无正式测试，不属于已完成模块。
+- [x] `rbt`：实现、公开契约、CMake/CTest、本地确定性/随机序列/OOM 测试已完成。
+- [ ] `rbt`：当前改动的 Windows/MSVC、Ubuntu/GCC、macOS/AppleClang CI 验证。
 
 ### Next
 
-- [ ] 完成 `rbt` 的公开契约、实现、测试和三平台验证
 - [ ] 实现以 `rbt` 为基础的 `map`
 
 ### Planned
